@@ -1,0 +1,107 @@
+/* ── Desktop sidebar ── */
+.sidebar {
+  width: var(--sidebar-width);
+  min-width: var(--sidebar-width);
+  height: 100vh;
+  background: var(--bg2);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  padding: 20px 12px;
+  position: sticky;
+  top: 0;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  margin-bottom: 28px;
+}
+
+.logoIcon { font-size: 24px; color: var(--accent2); line-height: 1; }
+
+.logoText {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--accent2), #c4b5fd);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.nav { display: flex; flex-direction: column; gap: 4px; flex: 1; }
+
+.navItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text2);
+  font-size: 14px;
+  font-weight: 400;
+  width: 100%;
+  text-align: left;
+  transition: all 0.15s ease;
+}
+.navItem:hover { background: var(--bg3); color: var(--text); }
+.navItem.active { background: rgba(124,109,240,0.15); color: var(--accent2); }
+
+/* ── Mobile bottom nav ── */
+.bottomNav {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: var(--bottom-nav-height);
+  background: var(--bg2);
+  border-top: 1px solid var(--border);
+  z-index: 100;
+  align-items: center;
+  justify-content: space-around;
+  padding: 0 8px;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.bottomItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  flex: 1;
+  background: transparent;
+  color: var(--text2);
+  font-size: 10px;
+  font-weight: 500;
+  padding: 6px 4px;
+  border-radius: var(--radius-xs);
+  transition: color 0.15s;
+}
+.bottomItem:active { transform: scale(0.92); }
+
+.bottomActive { color: var(--accent2) !important; }
+
+.fab {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 4px 16px rgba(124,109,240,0.5);
+  transition: all 0.15s;
+}
+.fab:active { transform: scale(0.9); }
+
+@media (max-width: 768px) {
+  .sidebar { display: none; }
+  .bottomNav { display: flex; }
+}

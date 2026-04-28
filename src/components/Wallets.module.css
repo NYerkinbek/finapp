@@ -1,0 +1,99 @@
+.page { flex: 1; overflow-y: auto; padding: 28px 32px; display: flex; flex-direction: column; gap: 20px; }
+
+.header { display: flex; align-items: center; justify-content: space-between; }
+
+.title { font-family: var(--font-display); font-size: 28px; font-weight: 700; }
+.subtitle { font-size: 13px; color: var(--text2); margin-top: 2px; }
+
+.addBtn {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--accent); color: #fff;
+  padding: 10px 20px; border-radius: var(--radius-sm);
+  font-size: 14px; font-weight: 500;
+}
+.addBtn:hover { background: var(--accent2); }
+
+.formCard {
+  background: var(--bg2); border: 1px solid var(--border2);
+  border-radius: var(--radius); padding: 20px;
+  display: flex; flex-direction: column; gap: 14px;
+}
+
+.formHeader {
+  display: flex; align-items: center; justify-content: space-between;
+  font-weight: 600; font-size: 15px;
+}
+.formHeader button { background: var(--bg3); color: var(--text2); padding: 4px; border-radius: 6px; }
+
+.formRow { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field label { font-size: 12px; color: var(--text2); font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; }
+
+.colorRow { display: flex; flex-direction: column; gap: 8px; }
+.colorRow label { font-size: 12px; color: var(--text2); font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; }
+
+.colors { display: flex; gap: 10px; }
+
+.colorDot {
+  width: 28px; height: 28px; border-radius: 50%;
+  border: 2px solid transparent; transition: all 0.15s;
+}
+.colorSelected { border-color: #fff; transform: scale(1.2); }
+
+.saveBtn {
+  display: flex; align-items: center; gap: 8px; justify-content: center;
+  background: var(--accent); color: #fff; padding: 10px;
+  border-radius: var(--radius-sm); font-size: 14px; font-weight: 500;
+}
+.saveBtn:hover { background: var(--accent2); }
+
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
+
+.walletCard {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 20px;
+  display: flex; flex-direction: column; gap: 10px;
+  transition: border-color 0.15s;
+}
+.walletCard:hover { border-color: var(--border2); }
+
+.walletTop { display: flex; align-items: center; justify-content: space-between; }
+
+.walletIcon {
+  width: 40px; height: 40px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center; font-size: 20px;
+}
+
+.walletActions { display: flex; gap: 6px; }
+.walletActions button {
+  background: var(--bg3); color: var(--text2); padding: 6px; border-radius: 6px;
+}
+.walletActions button:hover { background: var(--bg4); color: var(--text); }
+.deleteBtn:hover { color: var(--red) !important; }
+
+.walletName { font-size: 14px; font-weight: 500; }
+.walletBalance { font-family: var(--font-display); font-size: 24px; font-weight: 700; }
+
+.walletMeta { display: flex; gap: 12px; font-size: 13px; }
+.green { color: var(--green); }
+.red { color: var(--red); }
+
+.walletBar { height: 4px; background: var(--bg4); border-radius: 999px; overflow: hidden; }
+.walletBarFill { height: 100%; border-radius: 999px; transition: width 0.3s; }
+
+.walletStat { font-size: 11px; color: var(--text2); }
+
+/* ── Mobile ── */
+@media (max-width: 768px) {
+  .page {
+    padding: 16px;
+    padding-bottom: calc(var(--bottom-nav-height) + 16px);
+    gap: 14px;
+  }
+  .header { flex-direction: column; align-items: flex-start; gap: 12px; }
+  .title { font-size: 22px; }
+  .addBtn { width: 100%; justify-content: center; }
+  .grid { grid-template-columns: 1fr; }
+  .formRow { grid-template-columns: 1fr; }
+}
