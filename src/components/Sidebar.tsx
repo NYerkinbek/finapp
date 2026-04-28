@@ -27,7 +27,7 @@ export function Sidebar({ current, onChange, onAdd }: Props) {
       <aside className={styles.sidebar}>
         <div className={styles.logo}>
           <span className={styles.logoIcon}>◈</span>
-          <span className={styles.logoText}>FinFlow</span>
+          <span className={styles.logoText}>FinUp</span>
         </div>
         <nav className={styles.nav}>
           {nav.map(({ id, label, Icon }) => (

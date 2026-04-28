@@ -26,7 +26,7 @@ export function SpaceScreen() {
   return (
     <div className={styles.page}>
       <div className={styles.card}>
-        <div className={styles.logo}>◈ <span>FinFlow</span></div>
+        <div className={styles.logo}>◈ <span>FinUp</span></div>
         <div className={styles.userRow}>
           <span className={styles.userEmail}>{user?.email}</span>
           <button className={styles.logoutBtn} onClick={signOut}>Выйти</button>

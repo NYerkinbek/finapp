@@ -79,7 +79,7 @@ export function Dashboard({ onAddTransaction }: Props) {
       {/* Header */}
       <div className={styles.header}>
         <div>
-          <h1 className={styles.title}>Обзор</h1>
+          <h1 className={styles.title}></h1>
           <p className={styles.subtitle}>
             {new Date().toLocaleDateString('ru-RU', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
           </p>
