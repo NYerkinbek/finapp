@@ -11,6 +11,7 @@ import { Settings } from './components/Settings';
 import { AddTransactionModal } from './components/AddTransactionModal';
 import { AuthScreen } from './components/AuthScreen';
 import { SpaceScreen } from './components/SpaceScreen';
+import { PinScreen } from './components/PinScreen';
 import { Transaction } from './types';
 
 type Page = 'dashboard' | 'transactions' | 'budgets' | 'analytics' | 'settings';
@@ -40,8 +41,10 @@ function AppInner() {
 }
 
 function AppRouter() {
-  const { user, loading: authLoading } = useAuth();
+  const { user, loading: authLoading, signOut } = useAuth();
   const { space, loading: spaceLoading, loadSpace } = useSpace();
+  const [pinUnlocked, setPinUnlocked] = useState(false);
+  const hasPin = !!localStorage.getItem('finflow_pin');
 
   useEffect(() => {
     if (user) loadSpace();
@@ -55,6 +58,7 @@ function AppRouter() {
     );
   }
   if (!user)  return <AuthScreen />;
+  if (hasPin && !pinUnlocked) return <PinScreen onVerified={() => setPinUnlocked(true)} onSignOut={() => { signOut(); setPinUnlocked(false); }} />;
   if (!space) return <SpaceScreen />;
 
   return (

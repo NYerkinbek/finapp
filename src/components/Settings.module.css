@@ -293,6 +293,114 @@
 }
 .dangerBtn:hover { background: rgba(239,68,68,0.08); border-color: var(--red); }
 
+/* ── Confirm dialog ── */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 20px;
+}
+
+.dialog {
+  background: var(--bg2);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius);
+  padding: 24px;
+  width: 100%;
+  max-width: 360px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.dialogMsg {
+  font-size: 15px;
+  color: var(--text);
+  line-height: 1.5;
+}
+
+.dialogBtns {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.dialogCancel {
+  background: var(--bg3);
+  color: var(--text);
+  border: 1px solid var(--border);
+  padding: 9px 20px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.15s;
+}
+.dialogCancel:hover { background: var(--bg4); }
+
+.dialogConfirm {
+  background: var(--red);
+  color: #fff;
+  padding: 9px 20px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.15s;
+}
+.dialogConfirm:hover { opacity: 0.85; }
+
+/* ── PIN ── */
+.pinRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.pinInfo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pinStatus { font-size: 14px; color: var(--text); }
+
+.pinBtns { display: flex; gap: 8px; align-items: center; }
+
+.pinForm { display: flex; flex-direction: column; gap: 12px; }
+
+.pinFormRow { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+.pinInput {
+  font-size: 20px !important;
+  letter-spacing: 0.4em;
+  text-align: center;
+  font-weight: 600;
+}
+
+.pinError { font-size: 12px; color: var(--red); }
+
+.pinActions { display: flex; gap: 8px; }
+
+.cancelPinBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  justify-content: center;
+  background: var(--bg3);
+  color: var(--text2);
+  border: 1px solid var(--border);
+  padding: 9px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 500;
+  flex: 1;
+}
+.cancelPinBtn:hover { background: var(--bg4); }
+
 @media (max-width: 768px) {
   .page {
     padding: 16px;
@@ -301,4 +409,5 @@
   }
   .title { font-size: 22px; }
   .formRow { grid-template-columns: 1fr; }
+  .pinFormRow { grid-template-columns: 1fr; }
 }

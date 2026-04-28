@@ -36,7 +36,7 @@ export function AuthScreen() {
           <div className={styles.field}>
             <label>Пароль</label>
             <input type="password" value={password} onChange={e => setPassword(e.target.value)}
-              placeholder="Минимум 6 символов" onKeyDown={e => e.key === 'Enter' && submit()} />
+              placeholder="Минимум 8 символов" onKeyDown={e => e.key === 'Enter' && submit()} />
           </div>
         </div>
 
