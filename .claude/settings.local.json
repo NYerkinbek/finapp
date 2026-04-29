@@ -2,7 +2,14 @@
   "permissions": {
     "allow": [
       "Bash(npm install *)",
-      "Bash(npx tsc *)"
+      "Bash(npx tsc *)",
+      "WebFetch(domain:github.com)",
+      "WebSearch",
+      "WebFetch(domain:exchangerate.host)",
+      "WebFetch(domain:metals-api.com)",
+      "WebFetch(domain:www.goldapi.io)",
+      "WebFetch(domain:api-ninjas.com)",
+      "WebFetch(domain:www.nationalbank.kz)"
     ]
   }
 }
