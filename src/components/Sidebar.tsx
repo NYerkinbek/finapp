@@ -1,11 +1,10 @@
 import { LayoutDashboard, ArrowLeftRight, PieChart, Settings, TrendingUp, Plus } from 'lucide-react';
+import { NavTarget } from '../App';
 import styles from './Sidebar.module.css';
 
-type Page = 'dashboard' | 'transactions' | 'budgets' | 'analytics' | 'settings';
-
 interface Props {
-  current: Page;
-  onChange: (p: Page) => void;
+  current: NavTarget;
+  onChange: (p: NavTarget) => void;
   onAdd?: () => void;
 }
 
@@ -34,7 +33,7 @@ export function Sidebar({ current, onChange, onAdd }: Props) {
             <button
               key={id}
               className={`${styles.navItem} ${current === id ? styles.active : ''}`}
-              onClick={() => onChange(id as Page)}
+              onClick={() => onChange(id as NavTarget)}
             >
               <Icon size={18} />
               <span>{label}</span>
@@ -49,7 +48,7 @@ export function Sidebar({ current, onChange, onAdd }: Props) {
           <button
             key={id}
             className={`${styles.bottomItem} ${current === id ? styles.bottomActive : ''}`}
-            onClick={() => onChange(id as Page)}
+            onClick={() => onChange(id as NavTarget)}
           >
             <Icon size={20} />
             <span>{label}</span>
@@ -64,7 +63,7 @@ export function Sidebar({ current, onChange, onAdd }: Props) {
           <button
             key={id}
             className={`${styles.bottomItem} ${current === id ? styles.bottomActive : ''}`}
-            onClick={() => onChange(id as Page)}
+            onClick={() => onChange(id as NavTarget)}
           >
             <Icon size={20} />
             <span>{label}</span>

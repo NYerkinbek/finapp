@@ -138,7 +138,7 @@ export function Budgets() {
           <div className={styles.header}>
             <div>
               <p className={styles.subtitle}>
-                Потрачено ₸{fmt(totalSpent)} из ₸{fmt(totalBudget)} — {totalBudget > 0 ? Math.round((totalSpent / totalBudget) * 100) : 0}%
+                Потрачено {fmt(totalSpent)} ₸ из {fmt(totalBudget)} ₸ — {totalBudget > 0 ? Math.round((totalSpent / totalBudget) * 100) : 0}%
               </p>
             </div>
             <button className={styles.addBtn} onClick={() => { setShowForm(true); setEditBudget(null); }}>
@@ -149,7 +149,7 @@ export function Budgets() {
           <div className={styles.overallCard}>
             <div className={styles.overallLabel}>
               <span>Общий бюджет месяца</span>
-              <span>₸{fmt(totalSpent)} / ₸{fmt(totalBudget)}</span>
+              <span>{fmt(totalSpent)} ₸ / {fmt(totalBudget)} ₸</span>
             </div>
             <div className={styles.progressBar}>
               <div className={styles.progressFill} style={{
@@ -209,15 +209,15 @@ export function Budgets() {
                     </div>
                   </div>
                   <div className={styles.budgetAmounts}>
-                    <span className={styles.budgetSpent} style={{ color: over ? '#ef4444' : 'var(--text)' }}>₸{fmt(b.spent)}</span>
-                    <span className={styles.budgetLimit}>/ ₸{fmt(b.amount)}</span>
+                    <span className={styles.budgetSpent} style={{ color: over ? '#ef4444' : 'var(--text)' }}>{fmt(b.spent)} ₸</span>
+                    <span className={styles.budgetLimit}>/ {fmt(b.amount)} ₸</span>
                   </div>
                   <div className={styles.bar}>
                     <div className={styles.barFill} style={{ width: `${pct}%`, background: over ? '#ef4444' : warn ? '#f59e0b' : cat?.color ?? '#6366f1' }} />
                   </div>
                   <div className={styles.budgetMeta}>
                     <span className={over ? styles.red : styles.muted}>
-                      {over ? `Превышен на ₸${fmt(b.spent - b.amount)}` : `Осталось ₸${fmt(b.amount - b.spent)}`}
+                      {over ? `Превышен на ${fmt(b.spent - b.amount)} ₸` : `Осталось ${fmt(b.amount - b.spent)} ₸`}
                     </span>
                     <span className={styles.muted}>{Math.round(pct)}%</span>
                   </div>
@@ -246,7 +246,7 @@ export function Budgets() {
                   <div className={styles.historyMeta}>
                     <span className={styles.historyMonth}>{label}</span>
                     <span className={styles.historySaved} style={{ color: saved >= 0 ? 'var(--green)' : '#ef4444' }}>
-                      {saved >= 0 ? `Сэкономлено ₸${fmt(saved)}` : `Перерасход ₸${fmt(Math.abs(saved))}`}
+                      {saved >= 0 ? `Сэкономлено ${fmt(saved)} ₸` : `Перерасход ${fmt(Math.abs(saved))} ₸`}
                     </span>
                   </div>
                   {isOpen ? <ChevronUp size={16} color="var(--text2)" /> : <ChevronDown size={16} color="var(--text2)" />}
@@ -256,11 +256,11 @@ export function Budgets() {
                   <div className={styles.historyStatRow}>
                     <div className={styles.historyStat}>
                       <span className={styles.historyStatLabel}>Бюджет</span>
-                      <span className={styles.historyStatVal}>₸{fmt(budget)}</span>
+                      <span className={styles.historyStatVal}>{fmt(budget)} ₸</span>
                     </div>
                     <div className={styles.historyStat}>
                       <span className={styles.historyStatLabel}>Потрачено</span>
-                      <span className={styles.historyStatVal} style={{ color: over ? '#ef4444' : 'var(--text)' }}>₸{fmt(spent)}</span>
+                      <span className={styles.historyStatVal} style={{ color: over ? '#ef4444' : 'var(--text)' }}>{fmt(spent)} ₸</span>
                     </div>
                     <div className={styles.historyStat}>
                       <span className={styles.historyStatLabel}>% исполнения</span>
@@ -285,7 +285,7 @@ export function Budgets() {
                             <div className={styles.historyCatMeta}>
                               <span className={styles.historyCatName}>{cat?.name ?? '—'}</span>
                               <span style={{ color: bOver ? '#ef4444' : 'var(--text2)', fontSize: 12 }}>
-                                ₸{fmt(b.spent)} / ₸{fmt(b.amount)}
+                                {fmt(b.spent)} ₸ / {fmt(b.amount)} ₸
                               </span>
                             </div>
                             <div className={styles.bar}>
@@ -315,7 +315,7 @@ export function Budgets() {
                 </p>
               )}
               <p className={styles.subtitle}>
-                Ожидает оплаты: ₸{fmt(plannedTotal)}
+                Ожидает оплаты: {fmt(plannedTotal)} ₸
               </p>
             </div>
             <button className={styles.addBtn} onClick={() => { setShowPlanForm(true); setEditPlan(null); setPlanForm(emptyPlanForm()); }}>
@@ -406,7 +406,7 @@ export function Budgets() {
                   </div>
                   <div className={styles.planRight}>
                     <span className={`${styles.planAmount} ${overdue ? styles.red : p.isPaid ? styles.muted : ''}`}>
-                      ₸{fmt(p.amount)}
+                      {fmt(p.amount)} ₸
                     </span>
                     <div className={styles.budgetActions}>
                       <button onClick={() => startEditPlan(p)}><Edit2 size={13} /></button>

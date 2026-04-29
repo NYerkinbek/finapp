@@ -73,6 +73,12 @@ input, select, textarea {
   outline: none;
   transition: border-color 0.15s;
   width: 100%;
+  box-sizing: border-box;
+  max-width: 100%;
+}
+input[type="date"] {
+  -webkit-appearance: none;
+  appearance: none;
 }
 input:focus, select:focus, textarea:focus { border-color: var(--accent); }
 input::placeholder, textarea::placeholder { color: var(--text3); }

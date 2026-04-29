@@ -71,16 +71,16 @@ export function Analytics() {
       <div className={styles.summaryRow}>
         <div className={styles.summaryCard}>
           <div className={styles.sLabel}>Доходы за месяц</div>
-          <div className={`${styles.sValue} ${styles.green}`}>₸{fmt(totalIncome)}</div>
+          <div className={`${styles.sValue} ${styles.green}`}>{fmt(totalIncome)} ₸</div>
         </div>
         <div className={styles.summaryCard}>
           <div className={styles.sLabel}>Расходы за месяц</div>
-          <div className={`${styles.sValue} ${styles.red}`}>₸{fmt(totalExpense)}</div>
+          <div className={`${styles.sValue} ${styles.red}`}>{fmt(totalExpense)} ₸</div>
         </div>
         <div className={styles.summaryCard}>
           <div className={styles.sLabel}>Баланс месяца</div>
           <div className={`${styles.sValue} ${totalIncome - totalExpense >= 0 ? styles.green : styles.red}`}>
-            ₸{fmt(totalIncome - totalExpense)}
+            {fmt(totalIncome - totalExpense)} ₸
           </div>
         </div>
         <div className={styles.summaryCard}>
@@ -104,7 +104,7 @@ export function Analytics() {
               </Pie>
               <Tooltip
                 contentStyle={{ background: '#1e1e28', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10 }}
-                formatter={(v: number) => [`₸${fmt(v)}`, '']}
+                formatter={(v: number) => [`${fmt(v)} ₸`, '']}
               />
             </PieChart>
           </ResponsiveContainer>
@@ -113,7 +113,7 @@ export function Analytics() {
               <div key={i} className={styles.legendItem}>
                 <span className={styles.legendDot} style={{ background: c.color || COLORS[i % COLORS.length] }} />
                 <span className={styles.legendName}>{c.icon} {c.name}</span>
-                <span className={styles.legendVal}>₸{fmt(c.value)}</span>
+                <span className={styles.legendVal}>{fmt(c.value)} ₸</span>
               </div>
             ))}
           </div>
@@ -129,7 +129,7 @@ export function Analytics() {
               <YAxis tick={{ fill: '#a0a0b8', fontSize: 11 }} axisLine={false} tickLine={false} tickFormatter={v => `${Math.round(v/1000)}k`} />
               <Tooltip
                 contentStyle={{ background: '#1e1e28', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10 }}
-                formatter={(v: number) => [`₸${fmt(v)}`, '']}
+                formatter={(v: number) => [`${fmt(v)} ₸`, '']}
               />
               <Bar dataKey="income" fill="#10b981" radius={[4, 4, 0, 0]} name="Доходы" />
               <Bar dataKey="expense" fill="#6366f1" radius={[4, 4, 0, 0]} name="Расходы" />

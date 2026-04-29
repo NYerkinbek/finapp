@@ -15,17 +15,17 @@ import { SpaceScreen } from './components/SpaceScreen';
 import { PinScreen } from './components/PinScreen';
 import { Transaction } from './types';
 
-type Page = 'dashboard' | 'transactions' | 'budgets' | 'analytics' | 'settings';
-type Modal = 'budgets' | 'analytics' | 'settings' | null;
+export type NavTarget = 'dashboard' | 'transactions' | 'budgets' | 'analytics' | 'settings';
+type Modal = 'transactions' | 'budgets' | 'analytics' | 'settings' | null;
 
 const modalTitles: Record<NonNullable<Modal>, string> = {
+  transactions: 'Операции',
   budgets: 'Бюджет',
   analytics: 'Аналитика',
   settings: 'Настройки',
 };
 
 function AppInner() {
-  const [page, setPage] = useState<Page>('dashboard');
   const [modal, setModal] = useState<Modal>(null);
   const [showTxModal, setShowTxModal] = useState(false);
   const [editTransaction, setEditTransaction] = useState<Transaction | undefined>(undefined);
@@ -36,29 +36,26 @@ function AppInner() {
   const openEdit  = (t: Transaction) => { setInitialMethod('manual'); setEditTransaction(t); setShowTxModal(true); };
   const closeAdd  = () => { setShowTxModal(false); setEditTransaction(undefined); };
 
-  const navigate = (p: Page) => {
-    if (p === 'budgets' || p === 'analytics' || p === 'settings') {
-      setModal(p);
-    } else {
-      setPage(p);
-    }
+  const navigate = (p: NavTarget) => {
+    setModal(p === 'dashboard' ? null : p);
   };
+
+  const current: NavTarget = modal ?? 'dashboard';
 
   return (
     <div style={{ display: 'flex', width: '100%', height: '100dvh', overflow: 'hidden', position: 'relative' }}>
-      <Sidebar current={page} onChange={navigate} onAdd={openAdd} />
+      <Sidebar current={current} onChange={navigate} onAdd={openAdd} />
 
       <div style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-        {page === 'dashboard'    && <Dashboard onAddTransaction={openAdd} onAddVoice={openVoice} onNavigate={navigate} onEdit={openEdit} />}
-        {page === 'transactions' && <Transactions onAdd={openAdd} onEdit={openEdit} />}
+        <Dashboard onAddTransaction={openAdd} onAddVoice={openVoice} onNavigate={navigate} onEdit={openEdit} />
       </div>
 
-      {/* Page modals */}
       {modal && (
         <PageModal title={modalTitles[modal]} onClose={() => setModal(null)}>
-          {modal === 'budgets'   && <Budgets />}
-          {modal === 'analytics' && <Analytics />}
-          {modal === 'settings'  && <Settings />}
+          {modal === 'transactions' && <Transactions onAdd={openAdd} onEdit={openEdit} />}
+          {modal === 'budgets'      && <Budgets />}
+          {modal === 'analytics'    && <Analytics />}
+          {modal === 'settings'     && <Settings />}
         </PageModal>
       )}
 

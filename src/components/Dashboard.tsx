@@ -2,16 +2,16 @@ import { useMemo, useState, useRef, useEffect } from 'react';
 import { PieChart, Database, Settings, AudioLines, Plus, ArrowDownLeft, ArrowUpRight, ArrowLeftRight, ChevronDown, Wallet, Edit2, Trash2, LayoutList } from 'lucide-react';
 import { useApp } from '../store';
 import { Transaction } from '../types';
+import { NavTarget } from '../App';
 import { useCurrencyRates } from '../hooks/useCurrencyRates';
 import styles from './Dashboard.module.css';
 
-type Page = 'dashboard' | 'transactions' | 'budgets' | 'analytics' | 'settings';
 type Period = 'all' | 'month' | 'week' | 'today';
 
 interface Props {
   onAddTransaction: () => void;
   onAddVoice: () => void;
-  onNavigate: (p: Page) => void;
+  onNavigate: (p: NavTarget) => void;
   onEdit: (t: Transaction) => void;
 }
 
@@ -104,7 +104,7 @@ export function Dashboard({ onAddTransaction, onAddVoice, onNavigate, onEdit }: 
               <button className={`${styles.walletDdItem} ${!selectedWalletId ? styles.walletDdActive : ''}`} onClick={() => { setSelectedWalletId(null); setDropdownOpen(false); }}>
                 <span className={styles.walletDdDot} style={{ background: 'var(--accent)' }} />
                 <span>Все счета</span>
-                <span className={styles.walletDdBal}>₸ {fmt(totalBalance)}</span>
+                <span className={styles.walletDdBal}>{fmt(totalBalance)} ₸</span>
               </button>
               {wallets.map(w => (
                 <button key={w.id} className={`${styles.walletDdItem} ${selectedWalletId === w.id ? styles.walletDdActive : ''}`}

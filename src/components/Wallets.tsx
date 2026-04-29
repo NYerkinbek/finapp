@@ -42,7 +42,7 @@ export function Wallets() {
       <div className={styles.header}>
         <div>
           <h1 className={styles.title}>Кошельки</h1>
-          <p className={styles.subtitle}>Общий баланс: ₸ {fmt(totalBalance)}</p>
+          <p className={styles.subtitle}>Общий баланс: {fmt(totalBalance)} ₸</p>
         </div>
         <button className={styles.addBtn} onClick={() => { setShowForm(true); setEditId(null); }}>
           <Plus size={18} /> Добавить кошелек

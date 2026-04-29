@@ -134,7 +134,7 @@ export function Transactions({ onAdd, onEdit }: { onAdd: () => void; onEdit: (t:
               <div className={styles.dateRow}>
                 <span className={styles.dateLabel}>{formatDate(date)}</span>
                 <span className={`${styles.dateTotal} ${dayTotal >= 0 ? styles.green : styles.red}`}>
-                  {dayTotal >= 0 ? '+' : ''}₸{fmt(dayTotal)}
+                  {dayTotal >= 0 ? '+' : ''}{fmt(dayTotal)} ₸
                 </span>
               </div>
               {txs.map(t => {
@@ -151,7 +151,7 @@ export function Transactions({ onAdd, onEdit }: { onAdd: () => void; onEdit: (t:
                       <div className={styles.txTop}>
                         <span className={styles.txDesc}>{t.description || (isTransfer ? 'Перевод' : cat?.name)}</span>
                         <span className={`${styles.txAmount} ${isTransfer ? styles.transfer : t.type === 'income' ? styles.green : styles.red}`}>
-                          {isTransfer ? '' : t.type === 'income' ? '+' : '-'}₸{fmt(t.amount)}
+                          {isTransfer ? '' : t.type === 'income' ? '+' : '-'}{fmt(t.amount)} ₸
                         </span>
                       </div>
                       <div className={styles.txBottom}>
