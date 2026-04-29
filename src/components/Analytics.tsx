@@ -46,9 +46,9 @@ export function Analytics() {
 
   // Input method stats
   const methodStats = useMemo(() => {
-    const m: Record<string, number> = { manual: 0, receipt: 0, voice: 0, notification: 0 };
-    transactions.forEach(t => { m[t.inputMethod] = (m[t.inputMethod] || 0) + 1; });
-    const labels: Record<string, string> = { manual: '✏️ Вручную', receipt: '🧾 Чек', voice: '🎤 Голос', notification: '🔔 Уведомление' };
+    const m: Record<string, number> = { manual: 0, voice: 0 };
+    transactions.forEach(t => { if (t.inputMethod in m) m[t.inputMethod] = (m[t.inputMethod] || 0) + 1; });
+    const labels: Record<string, string> = { manual: '✏️ Вручную', voice: '🎤 Голос' };
     return Object.entries(m).map(([k, v]) => ({ name: labels[k], value: v }));
   }, [transactions]);
 
