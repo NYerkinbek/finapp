@@ -40,7 +40,6 @@ export function Budgets() {
     <div className={styles.page}>
       <div className={styles.header}>
         <div>
-          <h1 className={styles.title}>Бюджет</h1>
           <p className={styles.subtitle}>
             Потрачено ₸{fmt(totalSpent)} из ₸{fmt(totalBudget)} — {totalBudget > 0 ? Math.round((totalSpent/totalBudget)*100) : 0}%
           </p>

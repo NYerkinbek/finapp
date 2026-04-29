@@ -116,6 +116,10 @@
 /* ── Balance section ── */
 .balanceSection {
   margin-bottom: 24px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .periodRow {

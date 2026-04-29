@@ -4,7 +4,7 @@ import { useApp } from '../store';
 import { useSpace } from '../contexts/SpaceContext';
 import { useAuth } from '../contexts/AuthContext';
 import { savePin, removePin } from './PinScreen';
-import { Wallet, Category } from '../types';
+import { Wallet } from '../types';
 import styles from './Settings.module.css';
 
 const COLORS = ['#6366f1', '#10b981', '#f59e0b', '#ef4444', '#3b82f6', '#ec4899', '#8b5cf6', '#06b6d4'];
@@ -105,10 +105,6 @@ export function Settings() {
           </div>
         </div>
       )}
-
-      <div className={styles.header}>
-        <h1 className={styles.title}>Настройки</h1>
-      </div>
 
       <div className={styles.tabs}>
         <button className={`${styles.tab} ${tab === 'space'      ? styles.tabActive : ''}`} onClick={() => setTab('space')}>Пространство</button>

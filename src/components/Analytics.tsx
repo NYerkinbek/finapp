@@ -60,7 +60,6 @@ export function Analytics() {
   return (
     <div className={styles.page}>
       <div className={styles.header}>
-        {/* <h1 className={styles.title}>Аналитика</h1> */}
         <p className={styles.subtitle}>
           {now.toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' })}
         </p>
