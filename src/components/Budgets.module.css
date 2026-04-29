@@ -80,6 +80,72 @@
 
 .empty { color: var(--text2); font-size: 14px; grid-column: 1/-1; text-align: center; padding: 40px; }
 
+/* ── Tabs ── */
+.tabRow {
+  display: flex;
+  gap: 4px;
+  background: var(--bg3);
+  border-radius: var(--radius-sm);
+  padding: 4px;
+}
+.tabBtn {
+  flex: 1;
+  padding: 8px;
+  border-radius: calc(var(--radius-sm) - 2px);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text2);
+  text-align: center;
+  transition: all 0.15s;
+}
+.tabActive { background: var(--bg2); color: var(--text); box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+
+/* ── History ── */
+.historyList { display: flex; flex-direction: column; gap: 10px; }
+
+.historyCard {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.historyHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  width: 100%;
+  text-align: left;
+  background: transparent;
+}
+.historyHeader:hover { background: var(--bg3); }
+
+.historyMeta { display: flex; flex-direction: column; gap: 2px; }
+.historyMonth { font-size: 15px; font-weight: 600; color: var(--text); text-transform: capitalize; }
+.historySaved { font-size: 12px; font-weight: 500; }
+
+.historySummary { padding: 0 16px 14px; display: flex; flex-direction: column; gap: 10px; }
+
+.historyStatRow { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.historyStat { display: flex; flex-direction: column; gap: 2px; }
+.historyStatLabel { font-size: 11px; color: var(--text2); text-transform: uppercase; letter-spacing: 0.04em; }
+.historyStatVal { font-size: 15px; font-weight: 700; color: var(--text); }
+
+.historyCategories {
+  border-top: 1px solid var(--border);
+  padding: 10px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.historyCatRow { display: flex; align-items: center; gap: 10px; }
+.historyCatIcon { font-size: 18px; flex-shrink: 0; }
+.historyCatInfo { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+.historyCatMeta { display: flex; justify-content: space-between; align-items: center; }
+.historyCatName { font-size: 13px; font-weight: 500; color: var(--text); }
+
 /* ── Mobile ── */
 @media (max-width: 768px) {
   .page {
