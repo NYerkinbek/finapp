@@ -226,6 +226,7 @@
   border: 1px solid var(--border);
 }
 
+.rateLabelRow { display: flex; align-items: center; justify-content: space-between; gap: 4px; }
 .rateLabel { font-size: 11px; color: var(--text2); }
 .rateValue { font-size: 13px; font-weight: 700; color: var(--text); }
 .rateUp   { font-size: 10px; font-weight: 600; color: var(--green); }

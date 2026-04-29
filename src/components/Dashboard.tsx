@@ -136,13 +136,15 @@ export function Dashboard({ onAddTransaction, onAddVoice, onNavigate, onEdit }: 
               { label: 'Gold/г', value: rates.goldG.value, change: rates.goldG.change, display: rates.goldG.value > 0 ? `${fmt(rates.goldG.value)} ₸` : '—' },
             ]).map(({ label, change, display }) => (
               <div key={label} className={styles.rateCard}>
-                <span className={styles.rateLabel}>{label}</span>
+                <div className={styles.rateLabelRow}>
+                  <span className={styles.rateLabel}>{label}</span>
+                  {change !== 0 && (
+                    <span className={change > 0 ? styles.rateUp : styles.rateDown}>
+                      {change > 0 ? '▲' : '▼'} {Math.abs(change)}%
+                    </span>
+                  )}
+                </div>
                 <span className={styles.rateValue}>{display}</span>
-                {change !== 0 && (
-                  <span className={change > 0 ? styles.rateUp : styles.rateDown}>
-                    {change > 0 ? '▲' : '▼'} {Math.abs(change)}%
-                  </span>
-                )}
               </div>
             ))}
           </div>
