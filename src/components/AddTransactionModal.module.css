@@ -240,7 +240,8 @@
   gap: 12px;
 }
 
-.field { display: flex; flex-direction: column; gap: 6px; }
+.field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.field input, .field select { width: 100%; min-width: 0; box-sizing: border-box; }
 
 .label {
   font-size: 12px;
