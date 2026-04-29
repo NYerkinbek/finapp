@@ -29,7 +29,7 @@ function AppInner() {
     <div style={{ display: 'flex', width: '100%', height: '100dvh', overflow: 'hidden', position: 'relative' }}>
       <Sidebar current={page} onChange={setPage} onAdd={openAdd} />
       <div style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-        {page === 'dashboard'    && <Dashboard onAddTransaction={openAdd} />}
+        {page === 'dashboard'    && <Dashboard onAddTransaction={openAdd} onNavigate={setPage} />}
         {page === 'transactions' && <Transactions onAdd={openAdd} onEdit={openEdit} />}
         {page === 'budgets'      && <Budgets />}
         {page === 'analytics'    && <Analytics />}
