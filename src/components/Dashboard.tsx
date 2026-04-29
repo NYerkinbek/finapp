@@ -131,8 +131,8 @@ export function Dashboard({ onAddTransaction, onAddVoice, onNavigate, onEdit }: 
         {rates && (
           <div className={styles.ratesRow}>
             {([
-              { label: '🇺🇸 USD', value: rates.usd.value,   change: rates.usd.change,   display: `${fmt(rates.usd.value)} ₸` },
-              { label: '🇷🇺 RUB', value: rates.rub.value,   change: rates.rub.change,   display: `${rates.rub.value.toFixed(2)} ₸` },
+              { label: 'USD', value: rates.usd.value,   change: rates.usd.change,   display: `${fmt(rates.usd.value)} ₸` },
+              { label: 'RUB', value: rates.rub.value,   change: rates.rub.change,   display: `${rates.rub.value.toFixed(2)} ₸` },
               { label: 'Gold/г', value: rates.goldG.value, change: rates.goldG.change, display: rates.goldG.value > 0 ? `${fmt(rates.goldG.value)} ₸` : '—' },
             ]).map(({ label, change, display }) => (
               <div key={label} className={styles.rateCard}>
