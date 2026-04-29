@@ -7,6 +7,7 @@ import styles from './AddTransactionModal.module.css';
 interface Props {
   onClose: () => void;
   editTransaction?: Transaction;
+  initialMethod?: InputMethod;
 }
 
 type InputMethod = 'manual' | 'voice';
@@ -19,11 +20,11 @@ const VOICE_COMMANDS = [
 ];
 
 
-export function AddTransactionModal({ onClose, editTransaction }: Props) {
+export function AddTransactionModal({ onClose, editTransaction, initialMethod }: Props) {
   const { wallets, categories, addTransaction, updateTransaction } = useApp();
   const isEdit = !!editTransaction;
 
-  const [method, setMethod] = useState<InputMethod>('manual');
+  const [method, setMethod] = useState<InputMethod>(initialMethod ?? 'manual');
   const [type, setType] = useState<TransactionType>(editTransaction?.type ?? 'expense');
   const [amount, setAmount] = useState(editTransaction ? String(editTransaction.amount) : '');
   const [description, setDescription] = useState(editTransaction?.description ?? '');

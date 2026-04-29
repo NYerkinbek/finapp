@@ -1,5 +1,5 @@
 import { useMemo, useState, useRef, useEffect } from 'react';
-import { PieChart, Database, Settings, ScanLine, Mic, Plus, ArrowDownLeft, ArrowUpRight, ArrowLeftRight, ChevronDown, Wallet, Edit2, Trash2 } from 'lucide-react';
+import { PieChart, Database, Settings, Mic, Plus, ArrowDownLeft, ArrowUpRight, ArrowLeftRight, ChevronDown, Wallet, Edit2, Trash2 } from 'lucide-react';
 import { useApp } from '../store';
 import { Transaction } from '../types';
 import styles from './Dashboard.module.css';
@@ -9,11 +9,12 @@ type Period = 'all' | 'month' | 'week' | 'today';
 
 interface Props {
   onAddTransaction: () => void;
+  onAddVoice: () => void;
   onNavigate: (p: Page) => void;
   onEdit: (t: Transaction) => void;
 }
 
-export function Dashboard({ onAddTransaction, onNavigate, onEdit }: Props) {
+export function Dashboard({ onAddTransaction, onAddVoice, onNavigate, onEdit }: Props) {
   const { wallets, transactions, categories, deleteTransaction } = useApp();
   const [selectedWalletId, setSelectedWalletId] = useState<string | null>(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -248,8 +249,7 @@ export function Dashboard({ onAddTransaction, onNavigate, onEdit }: Props) {
 
       {/* ── Bottom action bar ── */}
       <div className={styles.actionBar}>
-        <button className={styles.actionBtn} onClick={onAddTransaction}><ScanLine size={20} /></button>
-        <button className={styles.actionBtn} onClick={onAddTransaction}><Mic size={20} /></button>
+        <button className={styles.actionBtn} onClick={onAddVoice}><Mic size={20} /></button>
         <button className={styles.actionBtnMain} onClick={onAddTransaction}><Plus size={22} /></button>
       </div>
     </div>

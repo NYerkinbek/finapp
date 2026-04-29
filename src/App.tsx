@@ -29,10 +29,12 @@ function AppInner() {
   const [modal, setModal] = useState<Modal>(null);
   const [showTxModal, setShowTxModal] = useState(false);
   const [editTransaction, setEditTransaction] = useState<Transaction | undefined>(undefined);
+  const [initialMethod, setInitialMethod] = useState<'manual' | 'voice'>('manual');
 
-  const openAdd  = () => { setEditTransaction(undefined); setShowTxModal(true); };
-  const openEdit = (t: Transaction) => { setEditTransaction(t); setShowTxModal(true); };
-  const closeAdd = () => { setShowTxModal(false); setEditTransaction(undefined); };
+  const openAdd   = () => { setInitialMethod('manual'); setEditTransaction(undefined); setShowTxModal(true); };
+  const openVoice = () => { setInitialMethod('voice');  setEditTransaction(undefined); setShowTxModal(true); };
+  const openEdit  = (t: Transaction) => { setInitialMethod('manual'); setEditTransaction(t); setShowTxModal(true); };
+  const closeAdd  = () => { setShowTxModal(false); setEditTransaction(undefined); };
 
   const navigate = (p: Page) => {
     if (p === 'budgets' || p === 'analytics' || p === 'settings') {
@@ -47,7 +49,7 @@ function AppInner() {
       <Sidebar current={page} onChange={navigate} onAdd={openAdd} />
 
       <div style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-        {page === 'dashboard'    && <Dashboard onAddTransaction={openAdd} onNavigate={navigate} onEdit={openEdit} />}
+        {page === 'dashboard'    && <Dashboard onAddTransaction={openAdd} onAddVoice={openVoice} onNavigate={navigate} onEdit={openEdit} />}
         {page === 'transactions' && <Transactions onAdd={openAdd} onEdit={openEdit} />}
       </div>
 
@@ -60,7 +62,7 @@ function AppInner() {
         </PageModal>
       )}
 
-      {showTxModal && <AddTransactionModal onClose={closeAdd} editTransaction={editTransaction} />}
+      {showTxModal && <AddTransactionModal onClose={closeAdd} editTransaction={editTransaction} initialMethod={initialMethod} />}
     </div>
   );
 }
