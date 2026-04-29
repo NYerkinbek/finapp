@@ -243,9 +243,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const addCategory = useCallback((c: Omit<Category, 'id'>) => {
     const id = `c_${uid()}`;
+    console.log('[addCategory] spaceId:', JSON.stringify(spaceId), '| id:', id);
     setCategories(prev => [...prev, { ...c, id }]);
-    supabase.from('categories').insert({ id, space_id: spaceId, name: c.name, icon: c.icon, type: c.type, color: c.color })
-      .then(({ error }) => log('addCategory', error));
+    supabase.from('categories')
+      .insert({ id, space_id: spaceId, name: c.name, icon: c.icon, type: c.type, color: c.color })
+      .select()
+      .then(({ data, error }) => console.log('[addCategory] response:', { data, error }));
   }, [spaceId]);
 
   const deleteCategory = useCallback((id: string) => {
