@@ -1,5 +1,5 @@
 import { useMemo, useState, useRef, useEffect } from 'react';
-import { PieChart, Database, Settings, AudioLines, Plus, ArrowDownLeft, ArrowUpRight, ArrowLeftRight, ChevronDown, Wallet, Edit2, Trash2 } from 'lucide-react';
+import { PieChart, Database, Settings, AudioLines, Plus, ArrowDownLeft, ArrowUpRight, ArrowLeftRight, ChevronDown, Wallet, Edit2, Trash2, LayoutList } from 'lucide-react';
 import { useApp } from '../store';
 import { Transaction } from '../types';
 import { useCurrencyRates } from '../hooks/useCurrencyRates';
@@ -119,6 +119,7 @@ export function Dashboard({ onAddTransaction, onAddVoice, onNavigate, onEdit }: 
         </div>
 
         <div className={styles.topActions}>
+          <button className={styles.topBtn} onClick={() => onNavigate('transactions')}><LayoutList size={18} /></button>
           <button className={styles.topBtn} onClick={() => onNavigate('analytics')}><PieChart size={18} /></button>
           <button className={styles.topBtn} onClick={() => onNavigate('budgets')}><Database size={18} /></button>
           <button className={styles.topBtn} onClick={() => onNavigate('settings')}><Settings size={18} /></button>
