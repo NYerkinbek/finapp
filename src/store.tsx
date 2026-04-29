@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, useRef, ReactNode, useCallback } from 'react';
-import { Wallet, Category, Transaction, Budget } from './types';
+import { Wallet, Category, Transaction, Budget, PlannedExpense } from './types';
 import { supabase } from './lib/supabase';
 import { useSpace } from './contexts/SpaceContext';
 import { useAuth } from './contexts/AuthContext';
@@ -9,12 +9,13 @@ import { useAuth } from './contexts/AuthContext';
 const toWallet   = (d: Record<string, unknown>): Wallet     => ({ id: d.id as string, name: d.name as string, balance: Number(d.balance), currency: d.currency as string, color: d.color as string, icon: d.icon as string });
 const toCategory = (d: Record<string, unknown>): Category   => ({ id: d.id as string, name: d.name as string, icon: d.icon as string, type: d.type as 'income' | 'expense', color: d.color as string });
 const toTx       = (d: Record<string, unknown>): Transaction => ({ id: d.id as string, walletId: d.wallet_id as string, toWalletId: (d.to_wallet_id as string | null) ?? undefined, categoryId: (d.category_id as string) ?? '', type: d.type as Transaction['type'], amount: Number(d.amount), description: d.description as string, date: d.date as string, inputMethod: d.input_method as Transaction['inputMethod'] });
-const toBudget   = (d: Record<string, unknown>): Budget     => ({ id: d.id as string, categoryId: d.category_id as string, amount: Number(d.amount), spent: Number(d.spent), period: d.period as 'monthly' | 'weekly', month: d.month as string });
+const toBudget   = (d: Record<string, unknown>): Budget          => ({ id: d.id as string, categoryId: d.category_id as string, amount: Number(d.amount), spent: Number(d.spent), period: d.period as 'monthly' | 'weekly', month: d.month as string });
+const toPlanned  = (d: Record<string, unknown>): PlannedExpense  => ({ id: d.id as string, name: d.name as string, amount: Number(d.amount), categoryId: (d.category_id as string) ?? '', walletId: (d.wallet_id as string) ?? '', dueDate: d.due_date as string, repeat: d.repeat as PlannedExpense['repeat'], isPaid: Boolean(d.is_paid) });
 
 // ─── Context ──────────────────────────────────────────────────────────────────
 
 interface AppState {
-  wallets: Wallet[]; categories: Category[]; transactions: Transaction[]; budgets: Budget[];
+  wallets: Wallet[]; categories: Category[]; transactions: Transaction[]; budgets: Budget[]; plannedExpenses: PlannedExpense[];
   activeWalletId: string | null; loading: boolean;
   addTransaction: (t: Omit<Transaction, 'id'>) => void;
   addWallet: (w: Omit<Wallet, 'id'>) => void;
@@ -29,6 +30,9 @@ interface AppState {
   addCategory: (c: Omit<Category, 'id'>) => void;
   updateCategory: (c: Category) => void;
   deleteCategory: (id: string) => void;
+  addPlannedExpense: (p: Omit<PlannedExpense, 'id'>) => void;
+  updatePlannedExpense: (p: PlannedExpense) => void;
+  deletePlannedExpense: (id: string) => void;
 }
 
 const AppContext = createContext<AppState | null>(null);
@@ -43,7 +47,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [wallets,      setWallets]      = useState<Wallet[]>([]);
   const [categories,   setCategories]   = useState<Category[]>([]);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [budgets,      setBudgets]      = useState<Budget[]>([]);
+  const [budgets,          setBudgets]          = useState<Budget[]>([]);
+  const [plannedExpenses,  setPlannedExpenses]  = useState<PlannedExpense[]>([]);
   const [activeWalletId, setActiveWallet] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -68,16 +73,33 @@ export function AppProvider({ children }: { children: ReactNode }) {
     if (data) setTransactions(data.map(toTx));
   }, [spaceId]);
 
+  const refetchPlannedExpenses = useCallback(async () => {
+    const { data } = await supabase.from('planned_expenses').select('*').eq('space_id', spaceId).order('due_date');
+    if (data) setPlannedExpenses(data.map(toPlanned));
+  }, [spaceId]);
+
   const refetchBudgets = useCallback(async () => {
     const { data } = await supabase.from('budgets').select('*').eq('space_id', spaceId);
     if (!data) return;
-    // Auto-reset if new month
+
     const currentMonth = new Date().toISOString().slice(0, 7);
-    const toReset = data.filter((b: Record<string, unknown>) => b.month !== currentMonth);
-    if (toReset.length) {
-      await Promise.all(toReset.map((b: Record<string, unknown>) =>
-        supabase.from('budgets').update({ spent: 0, month: currentMonth }).eq('id', b.id)
-      ));
+    const hasCurrent = data.some((b: Record<string, unknown>) => b.month === currentMonth);
+
+    if (!hasCurrent && data.length > 0) {
+      // Find most recent month's budgets and roll them over into a new month
+      const months = [...new Set((data as Record<string, unknown>[]).map(b => b.month as string))].sort().reverse();
+      const latestMonth = months[0];
+      const templates = (data as Record<string, unknown>[]).filter(b => b.month === latestMonth);
+      const inserts = templates.map(b => ({
+        id: `b_${crypto.randomUUID()}`,
+        space_id: spaceId,
+        category_id: b.category_id,
+        amount: b.amount,
+        spent: 0,
+        period: b.period,
+        month: currentMonth,
+      }));
+      await supabase.from('budgets').insert(inserts);
       const { data: updated } = await supabase.from('budgets').select('*').eq('space_id', spaceId);
       if (updated) setBudgets(updated.map(toBudget));
     } else {
@@ -90,7 +112,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!spaceId) return;
     setLoading(true);
-    Promise.all([refetchWallets(), refetchCategories(), refetchTransactions(), refetchBudgets()])
+    Promise.all([refetchWallets(), refetchCategories(), refetchTransactions(), refetchBudgets(), refetchPlannedExpenses()])
       .finally(() => setLoading(false));
   }, [spaceId]);
 
@@ -112,11 +134,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
       })
       .on('postgres_changes', { event: '*', schema: 'public', table: 'wallets',   filter: `space_id=eq.${spaceId}` }, refetchWallets)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'categories',filter: `space_id=eq.${spaceId}` }, refetchCategories)
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'budgets',   filter: `space_id=eq.${spaceId}` }, refetchBudgets)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'budgets',           filter: `space_id=eq.${spaceId}` }, refetchBudgets)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'planned_expenses', filter: `space_id=eq.${spaceId}` }, refetchPlannedExpenses)
       .subscribe();
 
     return () => { supabase.removeChannel(channel); };
-  }, [spaceId, refetchTransactions, refetchWallets, refetchBudgets, refetchCategories]);
+  }, [spaceId, refetchTransactions, refetchWallets, refetchBudgets, refetchCategories, refetchPlannedExpenses]);
 
   // ── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -264,13 +287,33 @@ export function AppProvider({ children }: { children: ReactNode }) {
       .then(({ error }) => log('deleteCategory', error));
   }, []);
 
+  const addPlannedExpense = useCallback((p: Omit<PlannedExpense, 'id'>) => {
+    const id = `pe_${uid()}`;
+    setPlannedExpenses(prev => [...prev, { ...p, id }]);
+    supabase.from('planned_expenses').insert({ id, space_id: spaceId, name: p.name, amount: p.amount, category_id: p.categoryId, wallet_id: p.walletId, due_date: p.dueDate, repeat: p.repeat, is_paid: p.isPaid })
+      .then(({ error }) => log('addPlannedExpense', error));
+  }, [spaceId]);
+
+  const updatePlannedExpense = useCallback((p: PlannedExpense) => {
+    setPlannedExpenses(prev => prev.map(x => x.id === p.id ? p : x));
+    supabase.from('planned_expenses').update({ name: p.name, amount: p.amount, category_id: p.categoryId, wallet_id: p.walletId, due_date: p.dueDate, repeat: p.repeat, is_paid: p.isPaid }).eq('id', p.id)
+      .then(({ error }) => log('updatePlannedExpense', error));
+  }, []);
+
+  const deletePlannedExpense = useCallback((id: string) => {
+    setPlannedExpenses(prev => prev.filter(p => p.id !== id));
+    supabase.from('planned_expenses').delete().eq('id', id)
+      .then(({ error }) => log('deletePlannedExpense', error));
+  }, []);
+
   return (
     <AppContext.Provider value={{
-      wallets, categories, transactions, budgets, activeWalletId, loading,
+      wallets, categories, transactions, budgets, plannedExpenses, activeWalletId, loading,
       addTransaction, addWallet, updateWallet, deleteWallet,
       addBudget, updateBudget, deleteBudget,
       deleteTransaction, updateTransaction,
       setActiveWallet, addCategory, updateCategory, deleteCategory,
+      addPlannedExpense, updatePlannedExpense, deletePlannedExpense,
     }}>
       {children}
     </AppContext.Provider>

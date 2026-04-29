@@ -1,35 +1,57 @@
 import { useState, useMemo } from 'react';
-import { Plus, Trash2, Edit2, X, Check, AlertTriangle, ChevronDown, ChevronUp } from 'lucide-react';
+import { Plus, Trash2, Edit2, X, Check, AlertTriangle, ChevronDown, ChevronUp, Bell, RefreshCw, Clock, CheckCircle2 } from 'lucide-react';
 import { useApp } from '../store';
-import { Budget } from '../types';
+import { Budget, PlannedExpense } from '../types';
 import styles from './Budgets.module.css';
 
-type Tab = 'current' | 'history';
+type Tab = 'current' | 'history' | 'planned';
+
+const REPEAT_LABELS: Record<PlannedExpense['repeat'], string> = {
+  once: 'Однократно', monthly: 'Каждый месяц', weekly: 'Каждую неделю', yearly: 'Каждый год',
+};
+
+const emptyPlanForm = () => ({
+  name: '', amount: '', categoryId: '', walletId: '',
+  dueDate: new Date().toISOString().slice(0, 10), repeat: 'once' as PlannedExpense['repeat'],
+});
 
 export function Budgets() {
-  const { budgets, categories, addBudget, updateBudget, deleteBudget } = useApp();
+  const { budgets, categories, wallets, addBudget, updateBudget, deleteBudget,
+    plannedExpenses, addPlannedExpense, updatePlannedExpense, deletePlannedExpense } = useApp();
+
   const [tab, setTab] = useState<Tab>('current');
+
+  // Budget form
   const [showForm, setShowForm] = useState(false);
   const [editBudget, setEditBudget] = useState<Budget | null>(null);
   const [form, setForm] = useState<{ categoryId: string; amount: string; period: 'monthly' | 'weekly' }>({ categoryId: '', amount: '', period: 'monthly' });
+
+  // History
   const [expandedMonth, setExpandedMonth] = useState<string | null>(null);
+
+  // Planned form
+  const [showPlanForm, setShowPlanForm] = useState(false);
+  const [editPlan, setEditPlan] = useState<PlannedExpense | null>(null);
+  const [planForm, setPlanForm] = useState(emptyPlanForm());
 
   const fmt = (n: number) => new Intl.NumberFormat('ru-KZ', { maximumFractionDigits: 0 }).format(n);
   const currentMonth = new Date().toISOString().slice(0, 7);
+  const today = new Date().toISOString().slice(0, 10);
 
   const expenseCats = categories.filter(c => c.type === 'expense');
 
+  // ── Budget handlers ───────────────────────────────────────────────────────
+
   const save = () => {
     if (!form.categoryId || !form.amount) return;
-    const month = currentMonth;
     if (editBudget) {
       updateBudget({ ...editBudget, categoryId: form.categoryId, amount: parseFloat(form.amount), period: form.period });
     } else {
-      addBudget({ categoryId: form.categoryId, amount: parseFloat(form.amount), spent: 0, period: form.period, month });
+      addBudget({ categoryId: form.categoryId, amount: parseFloat(form.amount), spent: 0, period: form.period, month: currentMonth });
     }
     setShowForm(false);
     setEditBudget(null);
-    setForm({ categoryId: '', amount: '', period: 'monthly' as const });
+    setForm({ categoryId: '', amount: '', period: 'monthly' });
   };
 
   const startEdit = (b: Budget) => {
@@ -38,17 +60,46 @@ export function Budgets() {
     setShowForm(true);
   };
 
-  // Current month budgets
+  // ── Planned handlers ──────────────────────────────────────────────────────
+
+  const savePlan = () => {
+    if (!planForm.name || !planForm.amount) return;
+    const payload = {
+      name: planForm.name,
+      amount: parseFloat(planForm.amount),
+      categoryId: planForm.categoryId,
+      walletId: planForm.walletId,
+      dueDate: planForm.dueDate,
+      repeat: planForm.repeat,
+      isPaid: false,
+    };
+    if (editPlan) {
+      updatePlannedExpense({ ...editPlan, ...payload, isPaid: editPlan.isPaid });
+    } else {
+      addPlannedExpense(payload);
+    }
+    setShowPlanForm(false);
+    setEditPlan(null);
+    setPlanForm(emptyPlanForm());
+  };
+
+  const startEditPlan = (p: PlannedExpense) => {
+    setPlanForm({ name: p.name, amount: String(p.amount), categoryId: p.categoryId, walletId: p.walletId, dueDate: p.dueDate, repeat: p.repeat });
+    setEditPlan(p);
+    setShowPlanForm(true);
+  };
+
+  const togglePaid = (p: PlannedExpense) => updatePlannedExpense({ ...p, isPaid: !p.isPaid });
+
+  // ── Derived data ──────────────────────────────────────────────────────────
+
   const currentBudgets = budgets.filter(b => b.month === currentMonth);
   const totalBudget = currentBudgets.reduce((s, b) => s + b.amount, 0);
   const totalSpent  = currentBudgets.reduce((s, b) => s + b.spent, 0);
 
-  // History: group budgets by month, exclude current
   const history = useMemo(() => {
     const map: Record<string, Budget[]> = {};
-    budgets.forEach(b => {
-      if (b.month !== currentMonth) (map[b.month] ??= []).push(b);
-    });
+    budgets.forEach(b => { if (b.month !== currentMonth) (map[b.month] ??= []).push(b); });
     return Object.entries(map)
       .sort(([a], [b]) => b.localeCompare(a))
       .map(([month, list]) => {
@@ -62,12 +113,23 @@ export function Budgets() {
       });
   }, [budgets, currentMonth]);
 
+  const sortedPlanned = useMemo(() => {
+    return [...plannedExpenses].sort((a, b) => {
+      if (a.isPaid !== b.isPaid) return a.isPaid ? 1 : -1;
+      return a.dueDate.localeCompare(b.dueDate);
+    });
+  }, [plannedExpenses]);
+
+  const plannedTotal   = plannedExpenses.filter(p => !p.isPaid).reduce((s, p) => s + p.amount, 0);
+  const plannedOverdue = plannedExpenses.filter(p => !p.isPaid && p.dueDate < today).length;
+
   return (
     <div className={styles.page}>
       {/* Tabs */}
       <div className={styles.tabRow}>
         <button className={`${styles.tabBtn} ${tab === 'current' ? styles.tabActive : ''}`} onClick={() => setTab('current')}>Текущий месяц</button>
         <button className={`${styles.tabBtn} ${tab === 'history' ? styles.tabActive : ''}`} onClick={() => setTab('history')}>История</button>
+        <button className={`${styles.tabBtn} ${tab === 'planned' ? styles.tabActive : ''}`} onClick={() => setTab('planned')}>Планы</button>
       </div>
 
       {/* ── CURRENT TAB ── */}
@@ -240,6 +302,122 @@ export function Budgets() {
             );
           })}
         </div>
+      )}
+
+      {/* ── PLANNED TAB ── */}
+      {tab === 'planned' && (
+        <>
+          <div className={styles.header}>
+            <div>
+              {plannedOverdue > 0 && (
+                <p className={styles.overdueNote}>
+                  <AlertTriangle size={13} /> {plannedOverdue} просроченных платежей
+                </p>
+              )}
+              <p className={styles.subtitle}>
+                Ожидает оплаты: ₸{fmt(plannedTotal)}
+              </p>
+            </div>
+            <button className={styles.addBtn} onClick={() => { setShowPlanForm(true); setEditPlan(null); setPlanForm(emptyPlanForm()); }}>
+              <Plus size={18} /> Добавить план
+            </button>
+          </div>
+
+          {showPlanForm && (
+            <div className={styles.formCard}>
+              <div className={styles.formHeader}>
+                <span>{editPlan ? 'Редактировать план' : 'Новый плановый расход'}</span>
+                <button onClick={() => setShowPlanForm(false)}><X size={16} /></button>
+              </div>
+              <div className={styles.formRow}>
+                <div className={styles.field}>
+                  <label>Название</label>
+                  <input value={planForm.name} onChange={e => setPlanForm(p => ({ ...p, name: e.target.value }))} placeholder="Аренда, подписка..." />
+                </div>
+                <div className={styles.field}>
+                  <label>Сумма (₸)</label>
+                  <input type="number" value={planForm.amount} onChange={e => setPlanForm(p => ({ ...p, amount: e.target.value }))} placeholder="0" />
+                </div>
+              </div>
+              <div className={styles.formRow}>
+                <div className={styles.field}>
+                  <label>Категория</label>
+                  <select value={planForm.categoryId} onChange={e => setPlanForm(p => ({ ...p, categoryId: e.target.value }))}>
+                    <option value="">Без категории</option>
+                    {expenseCats.map(c => <option key={c.id} value={c.id}>{c.icon} {c.name}</option>)}
+                  </select>
+                </div>
+                <div className={styles.field}>
+                  <label>Кошелёк</label>
+                  <select value={planForm.walletId} onChange={e => setPlanForm(p => ({ ...p, walletId: e.target.value }))}>
+                    <option value="">Не указан</option>
+                    {wallets.map(w => <option key={w.id} value={w.id}>{w.icon} {w.name}</option>)}
+                  </select>
+                </div>
+              </div>
+              <div className={styles.formRow}>
+                <div className={styles.field}>
+                  <label>Дата</label>
+                  <input type="date" value={planForm.dueDate} onChange={e => setPlanForm(p => ({ ...p, dueDate: e.target.value }))} />
+                </div>
+                <div className={styles.field}>
+                  <label>Повтор</label>
+                  <select value={planForm.repeat} onChange={e => setPlanForm(p => ({ ...p, repeat: e.target.value as PlannedExpense['repeat'] }))}>
+                    {(Object.entries(REPEAT_LABELS) as [PlannedExpense['repeat'], string][]).map(([val, label]) => (
+                      <option key={val} value={val}>{label}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+              <button className={styles.saveBtn} onClick={savePlan}><Check size={16} /> Сохранить</button>
+            </div>
+          )}
+
+          <div className={styles.planList}>
+            {sortedPlanned.length === 0 && (
+              <div className={styles.empty}>Нет запланированных расходов</div>
+            )}
+            {sortedPlanned.map(p => {
+              const cat    = categories.find(c => c.id === p.categoryId);
+              const wallet = wallets.find(w => w.id === p.walletId);
+              const overdue = !p.isPaid && p.dueDate < today;
+              const fmtDue = new Date(p.dueDate + 'T12:00:00').toLocaleDateString('ru-RU', { day: 'numeric', month: 'short', year: 'numeric' });
+              return (
+                <div key={p.id} className={`${styles.planCard} ${p.isPaid ? styles.planPaid : ''} ${overdue ? styles.planOverdue : ''}`}>
+                  <div className={styles.planLeft}>
+                    <button className={styles.planCheck} onClick={() => togglePaid(p)} title={p.isPaid ? 'Отметить неоплаченным' : 'Отметить оплаченным'}>
+                      {p.isPaid
+                        ? <CheckCircle2 size={20} color="var(--green)" />
+                        : <Clock size={20} color={overdue ? '#ef4444' : 'var(--text2)'} />}
+                    </button>
+                  </div>
+                  <div className={styles.planMid}>
+                    <div className={styles.planName}>{p.name}</div>
+                    <div className={styles.planMeta}>
+                      {cat && <span className={styles.planTag}>{cat.icon} {cat.name}</span>}
+                      {wallet && <span className={styles.planTag}>{wallet.icon} {wallet.name}</span>}
+                      <span className={`${styles.planTag} ${overdue ? styles.planTagRed : ''}`}>
+                        <Bell size={10} /> {fmtDue}
+                      </span>
+                      {p.repeat !== 'once' && (
+                        <span className={styles.planTag}><RefreshCw size={10} /> {REPEAT_LABELS[p.repeat]}</span>
+                      )}
+                    </div>
+                  </div>
+                  <div className={styles.planRight}>
+                    <span className={`${styles.planAmount} ${overdue ? styles.red : p.isPaid ? styles.muted : ''}`}>
+                      ₸{fmt(p.amount)}
+                    </span>
+                    <div className={styles.budgetActions}>
+                      <button onClick={() => startEditPlan(p)}><Edit2 size={13} /></button>
+                      <button onClick={() => deletePlannedExpense(p.id)} className={styles.deleteBtn}><Trash2 size={13} /></button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </>
       )}
     </div>
   );

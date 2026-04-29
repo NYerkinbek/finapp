@@ -146,6 +146,41 @@
 .historyCatMeta { display: flex; justify-content: space-between; align-items: center; }
 .historyCatName { font-size: 13px; font-weight: 500; color: var(--text); }
 
+/* ── Planned ── */
+.overdueNote {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 12px; color: #ef4444; font-weight: 500; margin-bottom: 2px;
+}
+
+.planList { display: flex; flex-direction: column; gap: 8px; }
+
+.planCard {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 14px 16px;
+  display: flex; align-items: center; gap: 12px;
+  transition: border-color 0.15s;
+}
+.planCard:hover { border-color: var(--border2); }
+.planPaid { opacity: 0.55; }
+.planOverdue { border-color: rgba(239,68,68,0.35) !important; }
+
+.planLeft { flex-shrink: 0; }
+.planCheck { background: none; padding: 0; display: flex; align-items: center; }
+.planCheck:hover { opacity: 0.75; }
+
+.planMid { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 5px; }
+.planName { font-size: 14px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.planMeta { display: flex; flex-wrap: wrap; gap: 5px; }
+.planTag {
+  display: inline-flex; align-items: center; gap: 3px;
+  font-size: 11px; color: var(--text2);
+  background: var(--bg3); border-radius: 5px; padding: 2px 6px;
+}
+.planTagRed { color: #ef4444; background: rgba(239,68,68,0.08); }
+
+.planRight { flex-shrink: 0; display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+.planAmount { font-family: var(--font-display); font-size: 16px; font-weight: 700; color: var(--text); }
+
 /* ── Mobile ── */
 @media (max-width: 768px) {
   .page {

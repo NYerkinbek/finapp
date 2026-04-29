@@ -37,3 +37,14 @@ export interface Budget {
   period: 'monthly' | 'weekly';
   month: string;
 }
+
+export interface PlannedExpense {
+  id: string;
+  name: string;
+  amount: number;
+  categoryId: string;
+  walletId: string;
+  dueDate: string; // YYYY-MM-DD
+  repeat: 'once' | 'monthly' | 'weekly' | 'yearly';
+  isPaid: boolean;
+}
