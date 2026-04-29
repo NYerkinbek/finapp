@@ -118,11 +118,15 @@ export function Dashboard({ onAddTransaction, onAddVoice, onNavigate, onEdit }: 
           )}
         </div>
 
-        <div className={styles.topActions}>
-          <button className={styles.topBtn} onClick={() => onNavigate('transactions')}><LayoutList size={18} /></button>
-          <button className={styles.topBtn} onClick={() => onNavigate('analytics')}><PieChart size={18} /></button>
-          <button className={styles.topBtn} onClick={() => onNavigate('budgets')}><Database size={18} /></button>
-          <button className={styles.topBtn} onClick={() => onNavigate('settings')}><Settings size={18} /></button>
+        <div className={styles.topRight}>
+          <div className={styles.topActions}>
+            <button className={styles.topBtn} onClick={() => onNavigate('transactions')}><LayoutList size={18} /></button>
+            <button className={styles.topBtn} onClick={() => onNavigate('analytics')}><PieChart size={18} /></button>
+            <button className={styles.topBtn} onClick={() => onNavigate('budgets')}><Database size={18} /></button>
+          </div>
+          <div className={styles.topActions}>
+            <button className={styles.topBtn} onClick={() => onNavigate('settings')}><Settings size={18} /></button>
+          </div>
         </div>
       </div>
 

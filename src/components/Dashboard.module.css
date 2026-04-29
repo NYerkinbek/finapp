@@ -93,18 +93,23 @@
 .walletDdBal { margin-left: auto; color: var(--text2); font-size: 12px; }
 
 /* Top action buttons */
+.topRight {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
 .topActions {
   display: flex;
   gap: 2px;
   background: var(--bg3);
-  border-radius: 14px;
+  border-radius: 50px;
   padding: 4px;
   border: 1px solid var(--border);
 }
 .topBtn {
   width: 34px;
   height: 34px;
-  border-radius: 10px;
+  border-radius: 50px;
   background: transparent;
   color: var(--text2);
   display: flex;
