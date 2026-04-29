@@ -127,6 +127,24 @@ export function Dashboard({ onAddTransaction, onAddVoice, onNavigate, onEdit }: 
 
       {/* ── Scrollable content ── */}
       <div className={styles.scroll}>
+        {/* Currency rates */}
+        {rates && (
+          <div className={styles.ratesRow}>
+            <div className={styles.rateCard}>
+              <span className={styles.rateLabel}>🇺🇸 USD</span>
+              <span className={styles.rateValue}>{fmt(rates.usd)} ₸</span>
+            </div>
+            <div className={styles.rateCard}>
+              <span className={styles.rateLabel}>🇷🇺 RUB</span>
+              <span className={styles.rateValue}>{rates.rub.toFixed(2)} ₸</span>
+            </div>
+            <div className={styles.rateCard}>
+              <span className={styles.rateLabel}>Золото / г</span>
+              <span className={styles.rateValue}>{rates.goldG > 0 ? `${fmt(rates.goldG)} ₸` : '—'}</span>
+            </div>
+          </div>
+        )}
+
         {/* Balance section */}
         <div className={styles.balanceSection}>
           <div className={styles.periodRow}>
@@ -165,24 +183,6 @@ export function Dashboard({ onAddTransaction, onAddVoice, onNavigate, onEdit }: 
             </div>
           </div>
         </div>
-
-        {/* Currency rates */}
-        {rates && (
-          <div className={styles.ratesRow}>
-            <div className={styles.rateCard}>
-              <span className={styles.rateLabel}>🇺🇸 USD</span>
-              <span className={styles.rateValue}>{fmt(rates.usd)} ₸</span>
-            </div>
-            <div className={styles.rateCard}>
-              <span className={styles.rateLabel}>🇷🇺 RUB</span>
-              <span className={styles.rateValue}>{rates.rub.toFixed(2)} ₸</span>
-            </div>
-            <div className={styles.rateCard}>
-              <span className={styles.rateLabel}>🥇 Золото / г</span>
-              <span className={styles.rateValue}>{fmt(rates.goldG)} ₸</span>
-            </div>
-          </div>
-        )}
 
         {/* Transactions grouped by date */}
         {grouped.length === 0 && (
