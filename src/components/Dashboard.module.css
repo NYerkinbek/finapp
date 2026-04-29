@@ -208,6 +208,27 @@
 }
 .inExAmt { font-size: 15px; font-weight: 600; }
 
+/* ── Currency rates ── */
+.ratesRow {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.rateCard {
+  background: var(--bg2);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border: 1px solid var(--border);
+}
+
+.rateLabel { font-size: 11px; color: var(--text2); }
+.rateValue { font-size: 13px; font-weight: 700; color: var(--text); }
+
 /* ── Transaction groups ── */
 .group { margin-bottom: 20px; }
 

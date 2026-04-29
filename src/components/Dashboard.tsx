@@ -2,6 +2,7 @@ import { useMemo, useState, useRef, useEffect } from 'react';
 import { PieChart, Database, Settings, AudioLines, Plus, ArrowDownLeft, ArrowUpRight, ArrowLeftRight, ChevronDown, Wallet, Edit2, Trash2 } from 'lucide-react';
 import { useApp } from '../store';
 import { Transaction } from '../types';
+import { useCurrencyRates } from '../hooks/useCurrencyRates';
 import styles from './Dashboard.module.css';
 
 type Page = 'dashboard' | 'transactions' | 'budgets' | 'analytics' | 'settings';
@@ -16,6 +17,7 @@ interface Props {
 
 export function Dashboard({ onAddTransaction, onAddVoice, onNavigate, onEdit }: Props) {
   const { wallets, transactions, categories, deleteTransaction } = useApp();
+  const { rates } = useCurrencyRates();
   const [selectedWalletId, setSelectedWalletId] = useState<string | null>(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [period, setPeriod] = useState<Period>('month');
@@ -163,6 +165,24 @@ export function Dashboard({ onAddTransaction, onAddVoice, onNavigate, onEdit }: 
             </div>
           </div>
         </div>
+
+        {/* Currency rates */}
+        {rates && (
+          <div className={styles.ratesRow}>
+            <div className={styles.rateCard}>
+              <span className={styles.rateLabel}>🇺🇸 USD</span>
+              <span className={styles.rateValue}>{fmt(rates.usd)} ₸</span>
+            </div>
+            <div className={styles.rateCard}>
+              <span className={styles.rateLabel}>🇷🇺 RUB</span>
+              <span className={styles.rateValue}>{rates.rub.toFixed(2)} ₸</span>
+            </div>
+            <div className={styles.rateCard}>
+              <span className={styles.rateLabel}>🥇 Золото / г</span>
+              <span className={styles.rateValue}>{fmt(rates.goldG)} ₸</span>
+            </div>
+          </div>
+        )}
 
         {/* Transactions grouped by date */}
         {grouped.length === 0 && (
