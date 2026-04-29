@@ -200,49 +200,58 @@ export function AppProvider({ children }: { children: ReactNode }) {
       .then(() => { refetchWallets(); refetchBudgets(); });
   }, [transactions, refetchWallets, refetchBudgets]);
 
+  const log = (op: string, error: unknown) => { if (error) console.error(`[store] ${op}:`, error); };
+
   const addWallet = useCallback((w: Omit<Wallet, 'id'>) => {
     const id = `w_${uid()}`;
-    const newW = { ...w, id };
-    setWallets(prev => [...prev, newW]);
-    supabase.from('wallets').insert({ id, space_id: spaceId, name: w.name, balance: w.balance, currency: w.currency, color: w.color, icon: w.icon });
+    setWallets(prev => [...prev, { ...w, id }]);
+    supabase.from('wallets').insert({ id, space_id: spaceId, name: w.name, balance: w.balance, currency: w.currency, color: w.color, icon: w.icon })
+      .then(({ error }) => log('addWallet', error));
   }, [spaceId]);
 
   const updateWallet = useCallback((w: Wallet) => {
     setWallets(prev => prev.map(x => x.id === w.id ? w : x));
-    supabase.from('wallets').update({ name: w.name, balance: w.balance, currency: w.currency, color: w.color, icon: w.icon }).eq('id', w.id);
+    supabase.from('wallets').update({ name: w.name, balance: w.balance, currency: w.currency, color: w.color, icon: w.icon }).eq('id', w.id)
+      .then(({ error }) => log('updateWallet', error));
   }, []);
 
   const deleteWallet = useCallback((id: string) => {
     setWallets(prev => prev.filter(w => w.id !== id));
     setTransactions(prev => prev.filter(t => t.walletId !== id));
-    supabase.from('wallets').delete().eq('id', id);
+    supabase.from('wallets').delete().eq('id', id)
+      .then(({ error }) => log('deleteWallet', error));
   }, [spaceId]);
 
   const addBudget = useCallback((b: Omit<Budget, 'id'>) => {
     const id = `b_${uid()}`;
     setBudgets(prev => [...prev, { ...b, id }]);
-    supabase.from('budgets').insert({ id, space_id: spaceId, category_id: b.categoryId, amount: b.amount, spent: b.spent, period: b.period, month: b.month });
+    supabase.from('budgets').insert({ id, space_id: spaceId, category_id: b.categoryId, amount: b.amount, spent: b.spent, period: b.period, month: b.month })
+      .then(({ error }) => log('addBudget', error));
   }, [spaceId]);
 
   const updateBudget = useCallback((b: Budget) => {
     setBudgets(prev => prev.map(x => x.id === b.id ? b : x));
-    supabase.from('budgets').update({ category_id: b.categoryId, amount: b.amount, period: b.period }).eq('id', b.id);
+    supabase.from('budgets').update({ category_id: b.categoryId, amount: b.amount, period: b.period }).eq('id', b.id)
+      .then(({ error }) => log('updateBudget', error));
   }, []);
 
   const deleteBudget = useCallback((id: string) => {
     setBudgets(prev => prev.filter(b => b.id !== id));
-    supabase.from('budgets').delete().eq('id', id);
+    supabase.from('budgets').delete().eq('id', id)
+      .then(({ error }) => log('deleteBudget', error));
   }, []);
 
   const addCategory = useCallback((c: Omit<Category, 'id'>) => {
     const id = `c_${uid()}`;
     setCategories(prev => [...prev, { ...c, id }]);
-    supabase.from('categories').insert({ id, space_id: spaceId, name: c.name, icon: c.icon, type: c.type, color: c.color });
+    supabase.from('categories').insert({ id, space_id: spaceId, name: c.name, icon: c.icon, type: c.type, color: c.color })
+      .then(({ error }) => log('addCategory', error));
   }, [spaceId]);
 
   const deleteCategory = useCallback((id: string) => {
     setCategories(prev => prev.filter(c => c.id !== id));
-    supabase.from('categories').delete().eq('id', id);
+    supabase.from('categories').delete().eq('id', id)
+      .then(({ error }) => log('deleteCategory', error));
   }, []);
 
   return (
