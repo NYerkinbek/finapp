@@ -47,7 +47,7 @@ function AppInner() {
       <Sidebar current={page} onChange={navigate} onAdd={openAdd} />
 
       <div style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-        {page === 'dashboard'    && <Dashboard onAddTransaction={openAdd} onNavigate={navigate} />}
+        {page === 'dashboard'    && <Dashboard onAddTransaction={openAdd} onNavigate={navigate} onEdit={openEdit} />}
         {page === 'transactions' && <Transactions onAdd={openAdd} onEdit={openEdit} />}
       </div>
 

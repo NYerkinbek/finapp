@@ -1,5 +1,5 @@
 import { useMemo, useState, useRef, useEffect } from 'react';
-import { Search, PieChart, Database, Settings, ScanLine, Mic, Plus, ArrowDownLeft, ArrowUpRight, ArrowLeftRight, ChevronDown, Wallet } from 'lucide-react';
+import { PieChart, Database, Settings, ScanLine, Mic, Plus, ArrowDownLeft, ArrowUpRight, ArrowLeftRight, ChevronDown, Wallet, Edit2, Trash2 } from 'lucide-react';
 import { useApp } from '../store';
 import { Transaction } from '../types';
 import styles from './Dashboard.module.css';
@@ -10,14 +10,16 @@ type Period = 'all' | 'month' | 'week' | 'today';
 interface Props {
   onAddTransaction: () => void;
   onNavigate: (p: Page) => void;
+  onEdit: (t: Transaction) => void;
 }
 
-export function Dashboard({ onAddTransaction, onNavigate }: Props) {
-  const { wallets, transactions, categories } = useApp();
+export function Dashboard({ onAddTransaction, onNavigate, onEdit }: Props) {
+  const { wallets, transactions, categories, deleteTransaction } = useApp();
   const [selectedWalletId, setSelectedWalletId] = useState<string | null>(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [period, setPeriod] = useState<Period>('month');
   const [periodOpen, setPeriodOpen] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const periodRef = useRef<HTMLDivElement>(null);
 
@@ -221,6 +223,17 @@ export function Dashboard({ onAddTransaction, onNavigate }: Props) {
                         <span className={styles.txAmt} style={{ color: t.type === 'income' ? 'var(--green)' : 'var(--text)' }}>
                           {t.type === 'income' ? '+' : '-'}{fmt(t.amount)} {wallet?.currency ?? '₸'}
                         </span>
+                      )}
+                      {deletingId === t.id ? (
+                        <div className={styles.txConfirm}>
+                          <button className={styles.txConfirmYes} onClick={() => { deleteTransaction(t.id); setDeletingId(null); }}>Удалить</button>
+                          <button className={styles.txConfirmNo} onClick={() => setDeletingId(null)}>Отмена</button>
+                        </div>
+                      ) : (
+                        <div className={styles.txActions}>
+                          <button className={styles.txActionBtn} onClick={() => onEdit(t)}><Edit2 size={13} /></button>
+                          <button className={`${styles.txActionBtn} ${styles.txActionDel}`} onClick={() => setDeletingId(t.id)}><Trash2 size={13} /></button>
+                        </div>
                       )}
                     </div>
                   </div>

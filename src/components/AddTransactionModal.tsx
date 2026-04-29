@@ -19,10 +19,10 @@ const VOICE_COMMANDS = [
 ];
 
 const NOTIFICATIONS = [
-  { text: 'Kaspi Bank: Покупка в Magnum 12400 ₸', amount: 12400, desc: 'Magnum', catHint: 'c5' },
-  { text: 'Kaspi Bank: Поступление 350000 ₸', amount: 350000, desc: 'Зачисление', catHint: 'c1' },
-  { text: 'Halyk Bank: Оплата 8500 ₸ restaurant', amount: 8500, desc: 'Ресторан', catHint: 'c7' },
-  { text: 'Kaspi Bank: Оплата 2100 ₸ такси', amount: 2100, desc: 'Такси', catHint: 'c6' },
+  { text: 'Kaspi Bank: Покупка в Magnum 12400 ₸', amount: 12400, desc: 'Magnum', catKeyword: 'продукт', type: 'expense' as const },
+  { text: 'Kaspi Bank: Поступление 350000 ₸', amount: 350000, desc: 'Зачисление', catKeyword: 'зарплат', type: 'income' as const },
+  { text: 'Halyk Bank: Оплата 8500 ₸ restaurant', amount: 8500, desc: 'Ресторан', catKeyword: 'ресторан', type: 'expense' as const },
+  { text: 'Kaspi Bank: Оплата 2100 ₸ такси', amount: 2100, desc: 'Такси', catKeyword: 'такси', type: 'expense' as const },
 ];
 
 export function AddTransactionModal({ onClose, editTransaction }: Props) {
@@ -80,20 +80,86 @@ export function AddTransactionModal({ onClose, editTransaction }: Props) {
     if (descWords.length) setDescription(descWords.join(' '));
   };
 
+  const parseReceiptText = (text: string) => {
+    const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+
+    // Find total amount — look for keywords like итого/сумма/total
+    let amount = 0;
+    const totalMatch = text.match(/(?:итого|сумма|total|к\s*оплате|к\s+оплате|sum|amount)[:\s]*(\d[\d\s]*(?:[.,]\d{1,2})?)/i);
+    if (totalMatch) {
+      amount = parseFloat(totalMatch[1].replace(/\s/g, '').replace(',', '.'));
+    } else {
+      // Fallback: largest number in text
+      const nums = [...text.matchAll(/\b(\d{3,}(?:[.,]\d{1,2})?)\b/g)].map(m => parseFloat(m[1].replace(',', '.')));
+      if (nums.length) amount = Math.max(...nums);
+    }
+    if (amount > 0) setAmount(String(Math.round(amount)));
+
+    // Merchant name — first meaningful line
+    const merchant = lines.find(l => l.length > 2 && !/^\d/.test(l)) ?? lines[0] ?? 'Покупка';
+    setDescription(merchant.slice(0, 60));
+    setType('expense');
+
+    const cat = categories.find(c => c.type === 'expense' && c.name.toLowerCase().includes('продукт'));
+    if (cat) setCategoryId(cat.id);
+    setReceiptParsed(true);
+  };
+
+  const scanWithVision = async (base64: string) => {
+    const key = import.meta.env.VITE_GOOGLE_VISION_KEY as string | undefined;
+    const res = await fetch(
+      `https://vision.googleapis.com/v1/images:annotate?key=${key}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          requests: [{ image: { content: base64 }, features: [{ type: 'TEXT_DETECTION', maxResults: 1 }] }],
+        }),
+      }
+    );
+    const data = await res.json();
+    const text: string = data.responses?.[0]?.fullTextAnnotation?.text ?? '';
+    if (!text) throw new Error('No text detected');
+    parseReceiptText(text);
+  };
+
+  const handleReceiptFile = async (file: File | null) => {
+    if (!file) return;
+    const key = import.meta.env.VITE_GOOGLE_VISION_KEY as string | undefined;
+    if (!key) { simulateReceipt(); return; }
+
+    setReceiptSim(true);
+    try {
+      const base64 = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve((reader.result as string).split(',')[1]);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+      await scanWithVision(base64);
+    } catch {
+      simulateReceipt();
+    } finally {
+      setReceiptSim(false);
+    }
+  };
+
   const simulateReceipt = () => {
     setReceiptSim(true);
     setTimeout(() => {
-      setAmount('15200'); setDescription('Магазин Magnum');
-      const cat = categories.find(c => c.id === 'c5');
+      setAmount('15200'); setDescription('Магазин Magnum'); setType('expense');
+      const cat = categories.find(c => c.type === 'expense' && c.name.toLowerCase().includes('продукт'));
       if (cat) setCategoryId(cat.id);
-      setType('expense'); setReceiptParsed(true); setReceiptSim(false);
+      setReceiptParsed(true); setReceiptSim(false);
     }, 1800);
   };
 
   const applyNotification = (idx: number) => {
     const n = NOTIFICATIONS[idx];
     setSelectedNotif(idx); setAmount(String(n.amount)); setDescription(n.desc);
-    setCategoryId(n.catHint); setType(n.catHint === 'c1' ? 'income' : 'expense');
+    setType(n.type);
+    const cat = categories.find(c => c.type === n.type && c.name.toLowerCase().includes(n.catKeyword));
+    if (cat) setCategoryId(cat.id);
   };
 
   const handleSubmit = () => {
@@ -148,9 +214,10 @@ export function AddTransactionModal({ onClose, editTransaction }: Props) {
                 <p className={styles.receiptHint}>Сфотографируйте чек или загрузите изображение</p>
                 <div className={styles.receiptBtns}>
                   <button className={styles.outlineBtn} onClick={simulateReceipt} disabled={receiptSim}>
-                    {receiptSim ? <span className={styles.scanning}>⏳ Сканирование...</span> : '📸 Симулировать сканирование'}
+                    {receiptSim ? <span className={styles.scanning}>⏳ Сканирование...</span> : '🎭 Демо'}
                   </button>
-                  <label className={styles.outlineBtn}>📁 Загрузить файл<input type="file" accept="image/*" style={{ display: 'none' }} onChange={() => simulateReceipt()} /></label>
+                  <label className={styles.outlineBtn}>📁 Загрузить файл<input type="file" accept="image/*" style={{ display: 'none' }} onChange={e => handleReceiptFile(e.target.files?.[0] ?? null)} /></label>
+                  <label className={styles.outlineBtn}>📷 Камера<input type="file" accept="image/*" capture="environment" style={{ display: 'none' }} onChange={e => handleReceiptFile(e.target.files?.[0] ?? null)} /></label>
                 </div>
               </div>
             ) : (

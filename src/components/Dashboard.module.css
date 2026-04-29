@@ -242,8 +242,54 @@
 .txDesc { font-size: 12px; color: var(--text2); }
 .txWallet { font-size: 12px; color: var(--text2); }
 
-.txRight { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; flex-shrink: 0; }
+.txRight { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
 .txAmt { font-size: 15px; font-weight: 600; }
+
+.txActions {
+  display: flex;
+  gap: 2px;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.txCard:hover .txActions { opacity: 1; }
+
+.txActionBtn {
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  background: var(--bg3);
+  color: var(--text2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.1s;
+}
+.txActionBtn:hover { background: var(--bg4); color: var(--text); }
+.txActionDel:hover { background: rgba(239,68,68,0.12); color: #ef4444; }
+
+.txConfirm {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+.txConfirmYes {
+  font-size: 11px;
+  font-weight: 600;
+  color: #fff;
+  background: #ef4444;
+  border-radius: 6px;
+  padding: 3px 8px;
+  transition: opacity 0.1s;
+}
+.txConfirmYes:hover { opacity: 0.85; }
+.txConfirmNo {
+  font-size: 11px;
+  color: var(--text2);
+  background: var(--bg3);
+  border-radius: 6px;
+  padding: 3px 8px;
+}
+.txConfirmNo:hover { color: var(--text); }
 
 .empty {
   text-align: center;
@@ -297,6 +343,10 @@
 .actionBtnMain:hover { opacity: 0.85; }
 
 /* ── Desktop: hide action bar, show in normal flow ── */
+@media (max-width: 768px) {
+  .txActions { opacity: 1; }
+}
+
 @media (min-width: 769px) {
   .actionBar { display: none; }
   .topBar { padding: 16px 24px; }
