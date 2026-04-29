@@ -17,7 +17,9 @@ export function Dashboard({ onAddTransaction, onNavigate }: Props) {
   const [selectedWalletId, setSelectedWalletId] = useState<string | null>(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [period, setPeriod] = useState<Period>('month');
+  const [periodOpen, setPeriodOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const periodRef = useRef<HTMLDivElement>(null);
 
   const selectedWallet = selectedWalletId ? wallets.find(w => w.id === selectedWalletId) ?? null : null;
   const totalBalance = wallets.reduce((s, w) => s + w.balance, 0);
@@ -27,6 +29,7 @@ export function Dashboard({ onAddTransaction, onNavigate }: Props) {
   useEffect(() => {
     const h = (e: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) setDropdownOpen(false);
+      if (periodRef.current && !periodRef.current.contains(e.target as Node)) setPeriodOpen(false);
     };
     document.addEventListener('mousedown', h);
     return () => document.removeEventListener('mousedown', h);
@@ -123,16 +126,22 @@ export function Dashboard({ onAddTransaction, onNavigate }: Props) {
         <div className={styles.balanceSection}>
           <div className={styles.periodRow}>
             <span className={styles.periodLabel}>Баланс за</span>
-            <div className={styles.periodDropdown}>
-              <select
-                value={period}
-                onChange={e => setPeriod(e.target.value as Period)}
-                className={styles.periodSelect}
-              >
-                {(['all','month','week','today'] as Period[]).map(p => (
-                  <option key={p} value={p}>{periodLabels[p]}</option>
-                ))}
-              </select>
+            <div className={styles.periodDropdown} ref={periodRef}>
+              <button className={styles.periodPill} onClick={() => setPeriodOpen(v => !v)}>
+                {periodLabels[period]}
+                <ChevronDown size={13} className={`${styles.chevron} ${periodOpen ? styles.chevronOpen : ''}`} />
+              </button>
+              {periodOpen && (
+                <div className={styles.periodMenu}>
+                  {(['all','month','week','today'] as Period[]).map(p => (
+                    <button key={p}
+                      className={`${styles.periodMenuItem} ${period === p ? styles.periodMenuActive : ''}`}
+                      onClick={() => { setPeriod(p); setPeriodOpen(false); }}>
+                      {periodLabels[p]}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
           <div className={styles.balanceNum}>{fmt(displayBalance)} <span className={styles.balanceCur}>{displayCurrency}</span></div>
