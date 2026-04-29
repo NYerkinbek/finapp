@@ -1,8 +1,9 @@
 import { useMemo } from 'react';
+import { Keyboard, Mic } from 'lucide-react';
 import { useApp } from '../store';
 import {
   PieChart, Pie, Cell, Tooltip, ResponsiveContainer,
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend
+  BarChart, Bar, XAxis, YAxis, CartesianGrid,
 } from 'recharts';
 import styles from './Analytics.module.css';
 
@@ -48,8 +49,10 @@ export function Analytics() {
   const methodStats = useMemo(() => {
     const m: Record<string, number> = { manual: 0, voice: 0 };
     transactions.forEach(t => { if (t.inputMethod in m) m[t.inputMethod] = (m[t.inputMethod] || 0) + 1; });
-    const labels: Record<string, string> = { manual: '✏️ Вручную', voice: '🎤 Голос' };
-    return Object.entries(m).map(([k, v]) => ({ name: labels[k], value: v }));
+    return [
+      { key: 'manual', name: 'Вручную', Icon: Keyboard, value: m.manual },
+      { key: 'voice',  name: 'Голос',   Icon: Mic,      value: m.voice  },
+    ];
   }, [transactions]);
 
   const COLORS = ['#6366f1', '#10b981', '#f59e0b', '#ef4444', '#3b82f6', '#ec4899', '#8b5cf6'];
@@ -145,7 +148,7 @@ export function Analytics() {
             return (
               <div key={i} className={styles.methodItem}>
                 <div className={styles.methodTop}>
-                  <span className={styles.methodName}>{m.name}</span>
+                  <span className={styles.methodName}><m.Icon size={14} style={{ display: 'inline', verticalAlign: 'middle', marginRight: 5 }} />{m.name}</span>
                   <span className={styles.methodCount}>{m.value} оп.</span>
                 </div>
                 <div className={styles.methodBar}>

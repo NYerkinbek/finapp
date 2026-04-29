@@ -27,6 +27,7 @@ interface AppState {
   updateTransaction: (t: Transaction) => void;
   setActiveWallet: (id: string | null) => void;
   addCategory: (c: Omit<Category, 'id'>) => void;
+  updateCategory: (c: Category) => void;
   deleteCategory: (id: string) => void;
 }
 
@@ -251,6 +252,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
       .then(({ data, error }) => console.log('[addCategory] response:', { data, error }));
   }, [spaceId]);
 
+  const updateCategory = useCallback((c: Category) => {
+    setCategories(prev => prev.map(x => x.id === c.id ? c : x));
+    supabase.from('categories').update({ name: c.name, icon: c.icon, type: c.type, color: c.color }).eq('id', c.id)
+      .then(({ error }) => log('updateCategory', error));
+  }, []);
+
   const deleteCategory = useCallback((id: string) => {
     setCategories(prev => prev.filter(c => c.id !== id));
     supabase.from('categories').delete().eq('id', id)
@@ -263,7 +270,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       addTransaction, addWallet, updateWallet, deleteWallet,
       addBudget, updateBudget, deleteBudget,
       deleteTransaction, updateTransaction,
-      setActiveWallet, addCategory, deleteCategory,
+      setActiveWallet, addCategory, updateCategory, deleteCategory,
     }}>
       {children}
     </AppContext.Provider>

@@ -4,7 +4,7 @@ import { useApp } from '../store';
 import { useSpace } from '../contexts/SpaceContext';
 import { useAuth } from '../contexts/AuthContext';
 import { savePin, removePin } from './PinScreen';
-import { Wallet } from '../types';
+import { Wallet, Category } from '../types';
 import styles from './Settings.module.css';
 
 const COLORS = ['#6366f1', '#10b981', '#f59e0b', '#ef4444', '#3b82f6', '#ec4899', '#8b5cf6', '#06b6d4'];
@@ -13,7 +13,7 @@ const EMOJI_PRESETS = ['💼', '💻', '🎁', '📈', '🛒', '🚗', '🍽️'
 interface ConfirmState { message: string; onConfirm: () => void; }
 
 export function Settings() {
-  const { wallets, categories, transactions, addWallet, updateWallet, deleteWallet, addCategory, deleteCategory } = useApp();
+  const { wallets, categories, transactions, addWallet, updateWallet, deleteWallet, addCategory, updateCategory, deleteCategory } = useApp();
   const { space, members, leaveSpace } = useSpace();
   const { user, signOut } = useAuth();
   const [tab, setTab] = useState<'space' | 'wallets' | 'categories'>('space');
@@ -29,6 +29,7 @@ export function Settings() {
 
   // Category form
   const [showCatForm, setShowCatForm] = useState(false);
+  const [editCatId, setEditCatId] = useState<string | null>(null);
   const [catForm, setCatForm] = useState({ name: '', icon: '💼', type: 'expense' as 'income' | 'expense', color: COLORS[0] });
 
   // PIN
@@ -67,9 +68,20 @@ export function Settings() {
   // Category handlers
   const saveCategory = () => {
     if (!catForm.name || !catForm.icon) return;
-    addCategory(catForm);
+    if (editCatId) {
+      updateCategory({ id: editCatId, ...catForm });
+    } else {
+      addCategory(catForm);
+    }
     setShowCatForm(false);
+    setEditCatId(null);
     setCatForm({ name: '', icon: '💼', type: 'expense', color: COLORS[0] });
+  };
+
+  const startEditCat = (c: Category) => {
+    setCatForm({ name: c.name, icon: c.icon, type: c.type as 'income' | 'expense', color: c.color });
+    setEditCatId(c.id);
+    setShowCatForm(true);
   };
 
   // PIN handlers
@@ -277,8 +289,8 @@ export function Settings() {
           {showCatForm && (
             <div className={styles.formCard}>
               <div className={styles.formHead}>
-                <span>Новая категория</span>
-                <button onClick={() => setShowCatForm(false)}><X size={15} /></button>
+                <span>{editCatId ? 'Редактировать категорию' : 'Новая категория'}</span>
+                <button onClick={() => { setShowCatForm(false); setEditCatId(null); setCatForm({ name: '', icon: '💼', type: 'expense', color: COLORS[0] }); }}><X size={15} /></button>
               </div>
               <div className={styles.formRow}>
                 <div className={styles.field}>
@@ -326,9 +338,12 @@ export function Settings() {
                     <span className={styles.catIcon}>{c.icon}</span>
                     <span className={styles.rowName}>{c.name}</span>
                     <div className={styles.catDot} style={{ background: c.color }} />
-                    <button className={styles.deleteBtn} onClick={() => ask(`Удалить категорию «${c.name}»?`, () => deleteCategory(c.id))}>
-                      <Trash2 size={14} />
-                    </button>
+                    <div className={styles.rowActions}>
+                      <button onClick={() => startEditCat(c)}><Edit2 size={14} /></button>
+                      <button className={styles.deleteBtn} onClick={() => ask(`Удалить категорию «${c.name}»?`, () => deleteCategory(c.id))}>
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
                   </div>
                 ))}
                 {list.length === 0 && <div className={styles.empty}>Нет категорий</div>}

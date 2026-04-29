@@ -1,5 +1,5 @@
 import { useMemo, useState, useRef, useEffect } from 'react';
-import { PieChart, Database, Settings, Mic, Plus, ArrowDownLeft, ArrowUpRight, ArrowLeftRight, ChevronDown, Wallet, Edit2, Trash2 } from 'lucide-react';
+import { PieChart, Database, Settings, AudioLines, Plus, ArrowDownLeft, ArrowUpRight, ArrowLeftRight, ChevronDown, Wallet, Edit2, Trash2 } from 'lucide-react';
 import { useApp } from '../store';
 import { Transaction } from '../types';
 import styles from './Dashboard.module.css';
@@ -249,7 +249,7 @@ export function Dashboard({ onAddTransaction, onAddVoice, onNavigate, onEdit }: 
 
       {/* ── Bottom action bar ── */}
       <div className={styles.actionBar}>
-        <button className={styles.actionBtn} onClick={onAddVoice}><Mic size={20} /></button>
+        <button className={styles.actionBtn} onClick={onAddVoice}><AudioLines size={20} /></button>
         <button className={styles.actionBtnMain} onClick={onAddTransaction}><Plus size={22} /></button>
       </div>
     </div>
