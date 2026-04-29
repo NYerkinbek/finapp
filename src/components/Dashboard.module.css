@@ -228,6 +228,8 @@
 
 .rateLabel { font-size: 11px; color: var(--text2); }
 .rateValue { font-size: 13px; font-weight: 700; color: var(--text); }
+.rateUp   { font-size: 10px; font-weight: 600; color: var(--green); }
+.rateDown { font-size: 10px; font-weight: 600; color: var(--red, #ef4444); }
 
 /* ── Transaction groups ── */
 .group { margin-bottom: 20px; }

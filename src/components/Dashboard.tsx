@@ -130,18 +130,21 @@ export function Dashboard({ onAddTransaction, onAddVoice, onNavigate, onEdit }: 
         {/* Currency rates */}
         {rates && (
           <div className={styles.ratesRow}>
-            <div className={styles.rateCard}>
-              <span className={styles.rateLabel}>🇺🇸 USD</span>
-              <span className={styles.rateValue}>{fmt(rates.usd)} ₸</span>
-            </div>
-            <div className={styles.rateCard}>
-              <span className={styles.rateLabel}>🇷🇺 RUB</span>
-              <span className={styles.rateValue}>{rates.rub.toFixed(2)} ₸</span>
-            </div>
-            <div className={styles.rateCard}>
-              <span className={styles.rateLabel}>Золото / г</span>
-              <span className={styles.rateValue}>{rates.goldG > 0 ? `${fmt(rates.goldG)} ₸` : '—'}</span>
-            </div>
+            {([
+              { label: '🇺🇸 USD', value: rates.usd.value,   change: rates.usd.change,   display: `${fmt(rates.usd.value)} ₸` },
+              { label: '🇷🇺 RUB', value: rates.rub.value,   change: rates.rub.change,   display: `${rates.rub.value.toFixed(2)} ₸` },
+              { label: 'Gold/г', value: rates.goldG.value, change: rates.goldG.change, display: rates.goldG.value > 0 ? `${fmt(rates.goldG.value)} ₸` : '—' },
+            ]).map(({ label, change, display }) => (
+              <div key={label} className={styles.rateCard}>
+                <span className={styles.rateLabel}>{label}</span>
+                <span className={styles.rateValue}>{display}</span>
+                {change !== 0 && (
+                  <span className={change > 0 ? styles.rateUp : styles.rateDown}>
+                    {change > 0 ? '▲' : '▼'} {Math.abs(change)}%
+                  </span>
+                )}
+              </div>
+            ))}
           </div>
         )}
 
