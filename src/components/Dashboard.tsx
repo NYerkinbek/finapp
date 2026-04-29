@@ -16,7 +16,7 @@ export function Dashboard({ onAddTransaction, onNavigate }: Props) {
   const { wallets, transactions, categories } = useApp();
   const [selectedWalletId, setSelectedWalletId] = useState<string | null>(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [period, setPeriod] = useState<Period>('all');
+  const [period, setPeriod] = useState<Period>('month');
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const selectedWallet = selectedWalletId ? wallets.find(w => w.id === selectedWalletId) ?? null : null;
@@ -123,11 +123,16 @@ export function Dashboard({ onAddTransaction, onNavigate }: Props) {
         <div className={styles.balanceSection}>
           <div className={styles.periodRow}>
             <span className={styles.periodLabel}>Баланс за</span>
-            <div className={styles.periodSelect}>
-              {(['all','month','week','today'] as Period[]).map(p => (
-                <button key={p} className={`${styles.periodBtn} ${period === p ? styles.periodActive : ''}`}
-                  onClick={() => setPeriod(p)}>{periodLabels[p]}</button>
-              ))}
+            <div className={styles.periodDropdown}>
+              <select
+                value={period}
+                onChange={e => setPeriod(e.target.value as Period)}
+                className={styles.periodSelect}
+              >
+                {(['all','month','week','today'] as Period[]).map(p => (
+                  <option key={p} value={p}>{periodLabels[p]}</option>
+                ))}
+              </select>
             </div>
           </div>
           <div className={styles.balanceNum}>{fmt(displayBalance)} <span className={styles.balanceCur}>{displayCurrency}</span></div>

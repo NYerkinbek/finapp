@@ -41,7 +41,7 @@ export function PinScreen({ onVerified, onSignOut }: Props) {
   return (
     <div className={styles.page}>
       <div className={styles.card}>
-        <div className={styles.logo}>◈ <span>FinFlow</span></div>
+        <div className={styles.logo}>◈ <span>FinUp</span></div>
         <div className={styles.hint}>Введите PIN-код</div>
 
         <div className={`${styles.dots} ${error ? styles.shake : ''}`}>
