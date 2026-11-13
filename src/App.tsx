@@ -65,7 +65,7 @@ function AppInner() {
 }
 
 function AppRouter() {
-  const { user, loading: authLoading, signOut } = useAuth();
+  const { user, loading: authLoading, signOut, recovery } = useAuth();
   const { space, loading: spaceLoading, loadSpace } = useSpace();
   const [pinUnlocked, setPinUnlocked] = useState(false);
   const hasPin = !!localStorage.getItem('finflow_pin');
@@ -81,6 +81,7 @@ function AppRouter() {
       </div>
     );
   }
+  if (recovery) return <AuthScreen initialMode="reset" />;
   if (!user)  return <AuthScreen />;
   if (hasPin && !pinUnlocked) return <PinScreen onVerified={() => setPinUnlocked(true)} onSignOut={() => { signOut(); setPinUnlocked(false); }} />;
   if (!space) return <SpaceScreen />;

@@ -78,3 +78,30 @@
   transition: color 0.15s;
 }
 .toggle:hover { color: var(--accent2); }
+
+.hint {
+  font-size: 13px;
+  color: var(--text2);
+  margin: -8px 0 0;
+  line-height: 1.5;
+}
+
+.forgot {
+  background: transparent;
+  color: var(--text2);
+  font-size: 13px;
+  align-self: flex-end;
+  margin-top: -8px;
+  transition: color 0.15s;
+}
+.forgot:hover { color: var(--accent2); }
+
+.info {
+  background: rgba(34,197,94,0.1);
+  border: 1px solid rgba(34,197,94,0.3);
+  color: #22c55e;
+  border-radius: var(--radius-xs);
+  padding: 10px 14px;
+  font-size: 13px;
+  line-height: 1.5;
+}
